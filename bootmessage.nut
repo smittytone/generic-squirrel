@@ -1,4 +1,6 @@
+// Boot device information functions
 function bootMessage() {
+    // Present OS version and network connection information
     local a = split(imp.getsoftwareversion(), "-");
     server.log("impOS version " + a[2]);
     local i = imp.net.info();
@@ -7,12 +9,13 @@ function bootMessage() {
     local t = "Connected by " + ((w.type == "wifi") ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
     server.log(t + " with IP address " + i.ipv4.address);
 
+    // Present the reason for the start-up
     s = logWokenReason();
     if (s.len() > 0) server.log(s);
 }
 
 function logWokenReason() {
-    // Log the reason the imp restarted
+    // Return the recorded reason for the device’s start-up
     local reason = "";
     local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
                      "Application code updated", "Squirrel error during the last run"
@@ -28,5 +31,5 @@ function logWokenReason() {
     return reason;
 }
 
-// Boot 'screen'
+// Present device information on boot
 bootMessage();
