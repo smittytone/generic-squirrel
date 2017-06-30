@@ -4,13 +4,11 @@ function bootMessage() {
     local i = imp.net.info();
     local w = i.interface[i.active];
     local s = ("connectedssid" in w) ? w.connectedssid : w.ssid;
-    local t = (w.type == "wifi") ? "Connected by WiFi on SSID \"" + s + "\"" : "Ethernet";
+    local t = "Connected by " + ((w.type == "wifi") ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
     server.log(t + " with IP address " + i.ipv4.address);
 
-    if (debug) {
-        s = logWokenReason();
-        if (s.len() > 0) server.log(s);
-    }
+    s = logWokenReason();
+    if (s.len() > 0) server.log(s);
 }
 
 function logWokenReason() {
@@ -22,9 +20,9 @@ function logWokenReason() {
                      "imp003 Reset pin triggered", "This device has just been re-configured",
                      "Restarted by server.restart()" ];
     try {
-        reason = "Device restarted. Reason: " + causes[hardware.wakereason()];
+        reason = "Device restarted: " + causes[hardware.wakereason()];
     } catch (err) {
-        reason = "Device restarted. Reason: Unknown";
+        reason = "Device restarted: Reason unknown";
     }
 
     return reason;
