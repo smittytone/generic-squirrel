@@ -4,9 +4,9 @@ function bootMessage() {
     local a = split(imp.getsoftwareversion(), "-");
     server.log("impOS version " + a[2]);
     local i = imp.net.info();
-    local w = i.interface[i.active];
-    local s = ("connectedssid" in w) ? w.connectedssid : w.ssid;
-    local t = "Connected by " + ((w.type == "wifi") ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
+    local w = i.interface[i.active != null ? i.active : 0];
+    local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : w.ssid) : "";
+    local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
     server.log(t + " with IP address " + i.ipv4.address);
 
     // Present the reason for the start-up
