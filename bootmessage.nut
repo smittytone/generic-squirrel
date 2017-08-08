@@ -1,4 +1,7 @@
 // Boot device information functions
+// Copyright Tony Smith, 2017
+// Licence: MIT
+// Code version 1.0.0
 function bootMessage() {
     // Present OS version and network connection information
     local a = split(imp.getsoftwareversion(), "-");
@@ -31,5 +34,5 @@ function logWokenReason() {
     return reason;
 }
 
-// Present device information on boot
+// Present device information
 bootMessage();
