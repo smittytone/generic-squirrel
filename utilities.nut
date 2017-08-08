@@ -1,5 +1,8 @@
+// Utility functions accessed via the table 'utilities'
+// Copyright Electric Imop, 2016; Tony Smith, 2017
+// Licence: MIT
+// Code version 1.1.0
 utilities <- {};
-utilities.version <- [1,1,0];
 
 // ********** Hex Conversion Functions **********
 // **********         Public           **********
@@ -16,7 +19,7 @@ utilities.hexStringToInteger <- function(hs) {
 
 utilities.integerToHexString <- function (i) {
     return format("0x%02x", i);
-}
+}tiliti
 
 // ********** Random Number Functions  **********
 // **********         Public           **********
