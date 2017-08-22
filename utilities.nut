@@ -1,7 +1,7 @@
 // Utility functions accessed via the table 'utilities'
-// Copyright Electric Imop, 2016; Tony Smith, 2017
 // Licence: MIT
-// Code version 1.1.0
+// Code version 1.1.1
+
 utilities <- {};
 
 // ********** Hex Conversion Functions **********
@@ -17,9 +17,25 @@ utilities.hexStringToInteger <- function(hs) {
     return i;
 }
 
+utilities.hexStringToBlob <- function(hs) {
+    hs = hs.tolower();
+    if (hs.slice(0, 2) == "0x") hs = hs.slice(2);
+    if (hs.len() % 2 != 0) hs = "0" + hs;
+    local l = hs.len() / 2;
+    local r = blob(l);
+    for (local i = 0 ; i < l ; i++) {
+        local hi = hs[i * 2] - '0';
+        if (hi > 9) hi = ((hi & 0x1F) - 7);
+        local lo = hs[i * 2 + 1] - '0';
+        if (lo > 9) lo = ((lo & 0x1F) - 7);
+        r[i] = hi << 4 | lo;
+    }
+    return r;
+} 
+
 utilities.integerToHexString <- function (i) {
     return format("0x%02x", i);
-}tiliti
+}
 
 // ********** Random Number Functions  **********
 // **********         Public           **********
