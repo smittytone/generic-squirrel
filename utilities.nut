@@ -31,10 +31,16 @@ utilities.hexStringToBlob <- function(hs) {
         r[i] = hi << 4 | lo;
     }
     return r;
-} 
+}
 
 utilities.integerToHexString <- function (i) {
     return format("0x%02x", i);
+}
+
+utilities.blobToHexString <- function (b) {
+    local s = "0x";
+    for (local i = 0 ; i < b.len() ; i++) s += format("%02x", b[i]);
+    return s;
 }
 
 // ********** Random Number Functions  **********
