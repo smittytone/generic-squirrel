@@ -224,3 +224,23 @@ utilities.debugI2C <- function(i2c) {
         }
     }
 }
+
+// **********    Start up Function     **********
+// **********         Public           **********
+utilities.getStartUpReason <- function(reasonCode = null) {
+    // Return the recorded reason for the device’s start-up
+    local reason = "";
+    local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
+                     "Application code updated", "Squirrel error during the last run"
+                     "This device has a new impOS", "Woken by a snooze-and-retry event",
+                     "imp003 Reset pin triggered", "This device has just been re-configured",
+                     "Restarted by server.restart()" ];
+    try {
+        reason = reasonCode != null ? "Device restarted: " + causes[reasonCode] : "Device restarted: " + causes[hardware.wakereason()];
+    } catch (err) {
+        reason = "Device restarted: Reason unknown";
+    }
+
+    return reason;
+}
+
