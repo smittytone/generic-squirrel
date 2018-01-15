@@ -1,14 +1,25 @@
 // Boot device information functions
 // Copyright Tony Smith, 2017
 // Licence: MIT
-// Code version 1.0.0
+// Code version 1.0.1
 function bootMessage() {
     // Present OS version and network connection information
+    // Take the software version string and extract the version number
     local a = split(imp.getsoftwareversion(), "-");
     server.log("impOS version " + a[2]);
+
+    // Get current networking information
     local i = imp.net.info();
+
+    // Get the active network interface (or the first network on
+    // the list if there is not network marked as active)
     local w = i.interface[i.active != null ? i.active : 0];
+
+    // Get the SSID of the network the device is connected to
+    // (or fallback to the last known network)
     local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : w.ssid) : "";
+
+    // Get the type of network we are using (WiFi or Ethernet)
     local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
     server.log(t + " with IP address " + i.ipv4.address);
 
@@ -34,5 +45,5 @@ function logWokenReason() {
     return reason;
 }
 
-// Present device information
+// Present device information now
 bootMessage();
