@@ -180,35 +180,24 @@ utilities._isLeapYear <- function(y) {
 
 // **********  UUID Accessor Function  **********
 // **********         Public           **********
-utilities.getNewUUID <- function(cb = null) {
-    if (cb == null) {
-        server.error("getNewUUID() requires a callback function with err, data parameters");
-        return;
-    }
-
-    ::_uuidcb <- cb;
-    http.get("https://www.uuidgenerator.net/").sendasync(utilities._extractUUID);
-}
-
-// **********         Private          **********
-utilities._extractUUID <- function(rs) {
-    local u = "";
-    if (rs.statuscode == 200) {
-        if (rs.body.len() > 0) {
-            for (local i = 0 ; i < (rs.body.len() - 15) ; ++i) {
-                local s = rs.body.slice(i, i + 15);
-                if (s == "h2 class=\"uuid\"") {
-                    u = rs.body.slice(i + 16, i + 52);
-                    break;
-                }
+utilities.uuid <- function() {
+    if (!("UUIDbytesToHex" in getroottable())) {
+        ::UUIDbytesToHex <- [];
+        server.log("Setting BtH");
+        if (::UUIDbytesToHex.len() == 0) {
+            for (local i = 0 ; i < 256 ; i++) {
+                ::UUIDbytesToHex.append(format("%02X", (i + 0x100)).slice(1));
             }
-
-            ::_uuidcb(null, u);
         }
-    } else {
-        ::_uuidcb("Error connecting to or receiving data from UUID generator", null);
     }
+    local i = 0;
+    local rnds = blob(16);
+    for (local j = 0 ; j < 16 ; j++) {
+        rnds.writen(((1.0 * math.rand() / RAND_MAX) * 256).tointeger(), 'b');
+    }
+    return ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring();
 }
+
 
 // **********       I2C Function       **********
 // **********         Public           **********
@@ -224,23 +213,3 @@ utilities.debugI2C <- function(i2c) {
         }
     }
 }
-
-// **********    Start up Function     **********
-// **********         Public           **********
-utilities.getStartUpReason <- function(reasonCode = null) {
-    // Return the recorded reason for the device’s start-up
-    local reason = "";
-    local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
-                     "Application code updated", "Squirrel error during the last run"
-                     "This device has a new impOS", "Woken by a snooze-and-retry event",
-                     "imp003 Reset pin triggered", "This device has just been re-configured",
-                     "Restarted by server.restart()" ];
-    try {
-        reason = reasonCode != null ? "Device restarted: " + causes[reasonCode] : "Device restarted: " + causes[hardware.wakereason()];
-    } catch (err) {
-        reason = "Device restarted: Reason unknown";
-    }
-
-    return reason;
-}
-
