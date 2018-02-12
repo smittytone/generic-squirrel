@@ -43,6 +43,33 @@ utilities.blobToHexString <- function (b) {
     return s;
 }
 
+utilities.toString <- function (o) {
+    switch (typeof(o)) {
+        case "table":
+            local table = "";
+            foreach (k, v in o) {
+                if (table != "") table += ", ";
+                table += toString(k) + ": " + toString(v);
+            }
+            return "{" + table + "}";
+        case "string":
+            return "'" + o + "'";
+        case "integer":
+            return o;
+        case "bool":
+            return o ? "true" : "false";
+        case "array":
+            local array = "";
+            foreach (v in o) {
+                if (array != "") array += ", ";
+                array += toString(v);
+            }
+            return "[" + array + "]";
+        default:
+            return typeof(o);
+    }
+}
+
 // ********** Random Number Functions  **********
 // **********         Public           **********
 utilities.frnd <- function(m) {
