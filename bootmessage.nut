@@ -13,7 +13,7 @@ function bootMessage() {
 
     // Get the active network interface (or the first network on
     // the list if there is no network marked as active)
-    local w = i.interface[i.active != null ? i.active : null];
+    local w = i.interface["active" in i ? i.active : null];
 
     if (w != null) {
         // Get the SSID of the network the device is connected to
@@ -26,7 +26,7 @@ function bootMessage() {
     }
 
     // Present the reason for the start-up
-    a = logWokenReason();
+    a = logWokenReason();r
     if (a.len() > 0) server.log(a);
 }
 
