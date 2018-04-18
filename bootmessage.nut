@@ -26,7 +26,7 @@ function bootMessage() {
     }
 
     // Present the reason for the start-up
-    a = logWokenReason();r
+    a = logWokenReason();
     if (a.len() > 0) server.log(a);
 }
 
