@@ -21,18 +21,23 @@ class SerialLogger {
         _newline = toPi ? "\n\r" : "\n";
   }
 
-  function enable() { _enabled = true; }
-  function disable() { _enabled = false; }
+    function enable() { _enabled = true; }
+    function disable() { _enabled = false; }
 
-  function log(message) {
-    if (_enabled) _uart.write("[IMP LOG] " + message + _newline);
-    server.log(message);
-  }
+    function log(message) {
+        if (_enabled) _uart.write("[IMP LOG] " + setTimeString() + " " + message + _newline);
+        server.log(message);
+    }
 
-  function error(message) {
-    if (_enabled) _uart.write("[IMP ERR] " + message + _newline);
-    server.error(message);
-  }
+    function error(message) {
+        if (_enabled) _uart.write("[IMP ERR] " + setTimeString() + " " + message + _newline);
+        server.error(message);
+    }
+
+    function setTimeString(time = null) {
+        local now = time != null ? time : date();
+        return format("%04d-%02d-%02d %02d:%02d:%02d", now.year, now.month + 1, now.day, now.hour, now.min, now.sec);
+    }
 }
 
 // Set up the debugger as 'serialLog'
