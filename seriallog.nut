@@ -5,10 +5,9 @@
 class SerialLogger {
 
     _uart = null;
-    _newline = null;
     _enabled = false;
 
-    constructor(uart = null, baud = 9600, enable = true, toPi = false) {
+    constructor(uart = null, baud = 9600, enable = true) {
         // Pass the UART object, eg. hardware.uart6E, Baud rate, Offline Enable True/False,
         // and whether you are logging to a Raspberry Pi (which seems to require \n\r for newline
         // NOTE UART is enabled by default; Pi setting disable by default
@@ -16,21 +15,19 @@ class SerialLogger {
         _uart = uart;
         _uart.configure(baud, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
 
-        // Process options
         if (typeof enable == "bool") _enabled = enable;
-        _newline = toPi ? "\n\r" : "\n";
   }
 
     function enable() { _enabled = true; }
     function disable() { _enabled = false; }
 
     function log(message) {
-        if (_enabled) _uart.write("[IMP LOG] " + setTimeString() + " " + message + _newline);
+        if (_enabled) _uart.write("[IMP LOG] " + setTimeString() + " " + message + "\r\n");
         server.log(message);
     }
 
     function error(message) {
-        if (_enabled) _uart.write("[IMP ERR] " + setTimeString() + " " + message + _newline);
+        if (_enabled) _uart.write("[IMP ERR] " + setTimeString() + " " + message + "\r\n");
         server.error(message);
     }
 
@@ -57,5 +54,5 @@ switch(imp.info().type) {
     uart = hardware.uart0;
 }
 
-serialLog <- SerialLogger(uart, 19200, true, true);
+serialLog <- SerialLogger(uart, 19200);
 serialLog.log("Log initialised and ready...");
