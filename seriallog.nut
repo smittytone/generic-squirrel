@@ -54,5 +54,6 @@ switch(imp.info().type) {
     uart = hardware.uart0;
 }
 
+// Instantiate 'seriaLog' as a global variable
 serialLog <- SerialLogger(uart, 19200);
 serialLog.log("Log initialised and ready...");

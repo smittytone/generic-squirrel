@@ -1,12 +1,13 @@
 // Boot device information functions
 // Copyright Tony Smith, 2017-18
 // Licence: MIT
-// Code version 1.0.2
-function bootMessage() {
+// Code version 1.1.0
+function bootMessage(logger = null) {
     // Present OS version and network connection information
     // Take the software version string and extract the version number
     local a = split(imp.getsoftwareversion(), "-");
-    server.log("impOS version " + a[2]);
+    if (logger == null) logger = server;
+    logger.log("impOS version " + a[2]);
 
     // Get current networking information
     local i = imp.net.info();
@@ -22,12 +23,12 @@ function bootMessage() {
 
         // Get the type of network we are using (WiFi or Ethernet)
         local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
-        server.log(t + " with IP address " + i.ipv4.address);
+        logger.log(t + " with IP address " + i.ipv4.address);
     }
 
     // Present the reason for the start-up
     a = logWokenReason();
-    if (a.len() > 0) server.log(a);
+    if (a.len() > 0) logger.log(a);
 }
 
 function logWokenReason() {
@@ -48,4 +49,10 @@ function logWokenReason() {
 }
 
 // Present device information now
-bootMessage();
+// Check for 'serialLog' in the root table - if it's there, use it (see bootMessage(), above)
+// 'serialLog' is added as a global by including seriallog.nut in your code ahead of bootmessage.nut
+if ("serialLog" in getroottable()) {
+    bootMessage(serialLog);
+} else {
+    bootMessage();
+}
