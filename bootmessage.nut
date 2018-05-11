@@ -1,13 +1,15 @@
 // Boot device information functions
 // Copyright Tony Smith, 2017-18
 // Licence: MIT
-// Code version 1.1.0
+// Code version 1.1.1
 function bootMessage(logger = null) {
     // Present OS version and network connection information
     // Take the software version string and extract the version number
     local a = split(imp.getsoftwareversion(), "-");
     if (logger == null) logger = server;
     logger.log("impOS version " + a[2]);
+    logger.log(format("Running \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
+    logger.log(format("SHA %s", __EI.DEPLOYMENT_SHA));
 
     // Get current networking information
     local i = imp.net.info();

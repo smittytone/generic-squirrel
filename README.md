@@ -6,7 +6,7 @@ Generic Squirrel code used in multiple projects. The `.nut` files kept here can 
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *serialLog.log()* and *serialLog.error()*. Includes a logger class and code to instantiate it.
 
-### bootmessage.nut 1.1.0 ###
+### bootmessage.nut 1.1.1 ###
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Works with **seriallog.nut**.
 
