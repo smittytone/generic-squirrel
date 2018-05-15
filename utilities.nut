@@ -1,12 +1,11 @@
 // Utility functions accessed via the table 'Utilities'
 // Licence: MIT
-// Code version 1.2.0
-
-Utilities <- {};
+// Code version 2.0.0
+utilities <- {};
 
 // ********** Hex Conversion Functions **********
 // **********         Public           **********
-Utilities.hexStringToInteger <- function(hs) {
+utilities.hexStringToInteger <- function(hs) {
     if (hs.slice(0, 2) == "0x") hs = hs.slice(2);
     local i = 0;
     foreach (c in hs) {
@@ -17,7 +16,7 @@ Utilities.hexStringToInteger <- function(hs) {
     return i;
 }
 
-Utilities.hexStringToBlob <- function(hs) {
+utilities.hexStringToBlob <- function(hs) {
     hs = hs.tolower();
     if (hs.slice(0, 2) == "0x") hs = hs.slice(2);
     if (hs.len() % 2 != 0) hs = "0" + hs;
@@ -33,13 +32,13 @@ Utilities.hexStringToBlob <- function(hs) {
     return r;
 }
 
-Utilities.integerToHexString <- function (i, r = 2) {
+utilities.integerToHexString <- function (i, r = 2) {
     if (r % 2 != 0) r++;
     local fs = "0x%0" + r.tostring() + "x";
     return format(fs, i);
 }
 
-Utilities.blobToHexString <- function (b, r = 2) {
+utilities.blobToHexString <- function (b, r = 2) {
     local s = "0x";
     if (r % 2 != 0) r++;
     local fs = "%0" + r.tostring() + "x";
@@ -47,7 +46,7 @@ Utilities.blobToHexString <- function (b, r = 2) {
     return s;
 }
 
-Utilities.toString <- function (o) {
+utilities.toString <- function (o) {
     switch (typeof(o)) {
         case "table":
             local table = "";
@@ -76,19 +75,19 @@ Utilities.toString <- function (o) {
 
 // ********** Random Number Functions  **********
 // **********         Public           **********
-Utilities.frnd <- function(m) {
+utilities.frnd <- function(m) {
     // Return a pseudorandom float between 0 and max, inclusive
     return (1.0 * math.rand() / RAND_MAX) * (m + 1);
 }
 
-Utilities.rnd <- function(m) {
+utilities.rnd <- function(m) {
     // Return a pseudorandom integer between 0 and max, inclusive
     return Utilities.frnd(m).tointeger();
 }
 
 // ********** Number Format Functions  **********
 // **********         Public           **********
-Utilities.numberFormatter <- function(n, d = null, s = ",") {
+utilities.numberFormatter <- function(n, d = null, s = ",") {
     if (d == null) {
         if (typeof n == "string") d = 0;
         else if (typeof n == "integer") d = 0;
@@ -132,7 +131,7 @@ Utilities.numberFormatter <- function(n, d = null, s = ",") {
 
 // **********    Calendar Functions    **********
 // **********         Public           **********
-Utilities.dayOfWeek <- function(d, m, y) {
+utilities.dayOfWeek <- function(d, m, y) {
     local dim = [
         [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
         [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -146,12 +145,12 @@ Utilities.dayOfWeek <- function(d, m, y) {
     return (ad % 7) - 1;
 }
 
-Utilities.isLeapYear <- function(y) {
+utilities.isLeapYear <- function(y) {
     if (Utilities._isLeapYear(y) == 1) return true;
     return false;
 }
 
-Utilities.bstCheck <- function() {
+utilities.bstCheck <- function() {
     // Checks the current date for British Summer Time,
     // returning true or false accordingly
     local n = date();
@@ -173,9 +172,8 @@ Utilities.bstCheck <- function() {
     return false;
 }
 
-Utilities.dstCheck <- function() {
-    // Checks the current date for US Daylight Savings Time,
-    // returning true or false accordingly
+utilities.dstCheck <- function() {
+    // Checks the current date for US Daylight Savings Time, returning true or false accordingly
     local n = date();
     if (n.month > 2 && n.month < 10) return true;
 
@@ -197,21 +195,21 @@ Utilities.dstCheck <- function() {
 }
 
 // **********         Private         **********
-Utilities._totalLeapDays <- function(y) {
+utilities._totalLeapDays <- function(y) {
     local t = y / 4;
     if (Utilities._isLeapYear(y) == 1) t = t - 1;
     t = t - ((y / 100) - (1752 / 100)) + ((y / 400) - (1752 / 400));
     return t;
 }
 
-Utilities._isLeapYear <- function(y) {
+utilities._isLeapYear <- function(y) {
     if ((y % 400) || ((y % 100) && !(y % 4))) return 1;
     return 0;
 }
 
 // **********  UUID Accessor Function  **********
 // **********         Public           **********
-Utilities.uuid <- function() {
+utilities.uuid <- function() {
     if (!("UUIDbytesToHex" in getroottable())) {
         ::UUIDbytesToHex <- [];
         if (::UUIDbytesToHex.len() == 0) {
@@ -231,13 +229,13 @@ Utilities.uuid <- function() {
 
 // **********       I2C Function       **********
 // **********         Public           **********
-Utilities.debugI2C <- function(i2c) {
+utilities.debugI2C <- function(i2c) {
     if (imp.environment() == ENVIRONMENT_AGENT) {
         server.error("Utilities.debugI2C() can only be run on a device");
         return;
     }
 
-    for (local i = 2 ; i < 256 ; i+=2) {
+    for (local i = 2 ; i < 256 ; i += 2) {
         if (i2c.read(i, "", 1) != null) {
             server.log(format("Device at 8-bit address: 0x%02X (7-bit address: 0x%02X)", i, (i >> 1)));
         }
