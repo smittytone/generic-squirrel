@@ -236,8 +236,6 @@ utilities.debugI2C <- function(i2c) {
     }
 
     for (local i = 2 ; i < 256 ; i += 2) {
-        if (i2c.read(i, "", 1) != null) {
-            server.log(format("Device at 8-bit address: 0x%02X (7-bit address: 0x%02X)", i, (i >> 1)));
-        }
+        if (i2c.read(i, "", 1) != null) server.log(format("Device at 8-bit address: 0x%02X (7-bit address: 0x%02X)", i, (i >> 1)));
     }
 }
