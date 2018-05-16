@@ -6,15 +6,15 @@ disconnectionmanager <- {
     "reconnectTimeout" : 30,
     "reconnectDelay" : 60,
 
-    // Disconnection state data
+    // Disconnection state data and information stores
     "message" : "",
     "flag" : false,
     "monitoring" : false,
-    "debug" : false,
 
-    // The reconnection callback
+    // The event report callback
     // Should take the form 'function(event)', where 'event' is a table with the key 'message', whose
-    // value is a string, and 'type' is also a string, but intended to be machine readable
+    // value is a human-readable string, and 'type' is a machine readable string, eg. 'connected'
+    // NOTE 'type' may be absent for purely informational, event-less messages
     "eventCallback" : null,
 
     "eventHandler" : function(reason) {
@@ -25,37 +25,38 @@ disconnectionmanager <- {
             // We weren't previously disconnected, so mark us as disconnected now
             if (!disconnectionhandler.flag) {
                 disconnectionhandler.flag = true;
+
+                // Record the disconnection time for future reference
                 local now = date();
                 disconnectionhandler.message = "Went offline at " + now.hour + ":" + now.min + ":" + now.sec + ". Reason: " + reason;
             }
 
-            if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "unexpectedly disconnected", "type" : "disconnect"});
+            // Send a 'disconnected' event to the host app
+            if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Device unexpectedly disconnected", "type" : "disconnected"});
 
-            // Schedule an attempt to re-connect in RECONNECT_DELAY seconds
+            // Schedule an attempt to re-connect in 'reconnectDelay' seconds
             imp.wakeup(disconnectionhandler.reconnectDelay, function() {
-                // Tell the host app that we're connecting
-                if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "connecting", "type" : "connecting"});
-
-                // If we're not connected, attempt to do so. If we are connected,
-                // re-call 'eventHandler()' to make sure the 'connnected' flow is actioned
                 if (!server.isconnected()) {
+                    // If we're not connected, send a 'connecting' event to the host app and try to connect
+                    if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Device connecting", "type" : "connecting"});
                     server.connect(disconnectionhandler.eventHandler.bindenv(this), disconnectionhandler.reconnectTimeout);
                 } else {
+                    // If we are connected, re-call 'eventHandler()' to make sure the 'connnected' flow is executed
                     disconnectionhandler.eventHandler(SERVER_CONNECTED);
                 }
             }.bindenv(this));
         } else {
-            // Back online so request a weather forecast from the agent
-            if (disconnectionhandler.flag) {
-                if (disconnectionhandler.debug) {
-                    server.log(disconnectionhandler.message);
-                    local now = date();
-                    server.log("Back online at " + now.hour + ":" + now.min + ":" + now.sec);
-                }
+            // The imp is back online
+            if (disconnectionhandler.flag && disconnectionhandler.eventCallback != null) {
+                // Send a 'connected' event to the host app
+                local now = date();
+                disconnectionhandler.eventCallback({"message": ("Back online at " + now.hour + ":" + now.min + ":" + now.sec), "type" : "connected"});
+
+                // Report the time that the device went offline
+                disconnectionhandler.eventCallback({"message": disconnectionhandler.message});
             }
 
             disconnectionhandler.flag = false;
-            if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "connected", "type" : "connect"});
         }
     }
 
@@ -64,34 +65,32 @@ disconnectionmanager <- {
         server.setsendtimeoutpolicy(RETURN_ON_ERROR, WAIT_TIL_SENT, 10);
         server.onunexpecteddisconnect(disconnectionhandler.eventHandler);
         disconnectionhandler.monitoring = true;
-        if (disconnectionhandler.debug) server.log("Enabling disconnection monitoring");
-        if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "monitoring on", "type" : "status"});
+        if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Enabling disconnection monitoring"});
     }
 
     "stop" : function() {
         // De-Register handlers etc.
         disconnectionhandler.monitoring = false;
-        if (disconnectionhandler.debug) server.log("Disabling disconnection monitoring");
-        if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "monitoring off", "type" : "status"});
+        if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Disabling disconnection monitoring"});
     }
 
     "connect" : function() {
+        // Attempt to connect to the server if we're not connected already
         if (!server.isconnected()) server.connect(disconnectionhandler.eventHandler.bindenv(this), disconnectionhandler.reconnectTimeout);
+        if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Manually connecting to server", "type": "connecting"});
     }
 
     "disconnect" : function() {
+        // Disconnect from the server if we're not disconnected already
         if (server.isconnected()) {
             server.flush(10);
             server.disconnect();
-            if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "manually disconnected", "type" : "disconnect"});
+            if (disconnectionhandler.eventCallback != null) disconnectionhandler.eventCallback({"message": "Manually disconnected from server", "type": "disconnected"});
         }
     }
 
     "setCallback" : function(cb = null) {
+        // Convenience function for setting the framework's event report callback
         if (cb != null && typeof cb == "function") disconnectionhandler.eventCallback = cb;
-    }
-
-    "setDebug" : function(state = false) {
-        if (state != null && typeof state == "boolean") disconnectionhandler.debug = state;
     }
 }
