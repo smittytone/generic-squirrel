@@ -38,3 +38,19 @@ A table of utility routines.  Please see the source code for further information
 
 - 2.0.0
     - Change table name to *utilities* (lowercase)
+
+### disconnect.nut 1.0.0 ###
+
+Provides DisconnectionManager, a handler for imp connection state. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
+
+The properties *disconnectionManager.reconnectTimeout* and *disconnectionManager.reconnectDelay* can be used to set, respectively, the period after which a disconnected imp will attempt to reconnect, and the timeout period it allows for the reconnection attempt. These values default to, respectively, 60 and 30 seconds.
+
+The property *disconnectionManager.eventCallback* can be set to a function with a single parameter, *event*. This function will then be called whenever a connection is made, the imp disconnects, or the imp attempts to connect. The value of *event* is a table. Its possible keys include:
+
+- *type* &mdash; `"connected"`, `"disconnected"` or `"connecting"`, ie. the imp’s state
+- *message* &mdash; a human-readable status message
+
+#### Release Notes ####
+
+- 1.0.0
+    - Initial release
