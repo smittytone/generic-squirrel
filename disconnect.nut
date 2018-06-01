@@ -1,7 +1,7 @@
 // Provide disconnection functionality as a table of functions and properties
 // Copyright Tony Smith, 2018
 // Licence: MIT
-// Code version 1.0.0
+// Code version 1.0.1
 disconnectionManager <- {
 
     // Timeout periods
@@ -62,12 +62,13 @@ disconnectionManager <- {
             // The imp is back online
             if (disconnectionManager.flag && disconnectionManager.eventCallback != null) {
                 // Send a 'connected' event to the host app
-                local now = date();
-                disconnectionManager.eventCallback({"message": format("Back online at %02i:%02i:%02i. Connection attempts: %i", now.hour, now.min, now.sec, disconnectionManager.retries), "type" : "connected"});
-
                 // Report the time that the device went offline
-                now = disconnectionManager.offtime;
+                local now = disconnectionManager.offtime;
                 disconnectionManager.eventCallback({"message": format("Went offline at %02i:%02i:%02i. Reason %i", now.hour, now.min, now.sec, disconnectionManager.reason)});
+
+                // Report the time that the device is back online
+                now = date();
+                disconnectionManager.eventCallback({"message": format("Back online at %02i:%02i:%02i. Connection attempts: %i", now.hour, now.min, now.sec, disconnectionManager.retries), "type" : "connected"});
             }
 
             disconnectionManager.flag = false;
