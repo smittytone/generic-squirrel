@@ -1,7 +1,7 @@
 // Provide disconnection functionality as a table of functions and properties
 // Copyright Tony Smith, 2018
 // Licence: MIT
-// Code version 1.0.1
+#version = "1.0.2";
 disconnectionManager <- {
 
     // Timeout periods
@@ -15,6 +15,7 @@ disconnectionManager <- {
     "reason" : SERVER_CONNECTED,
     "retries" : 0,
     "offtime" : null,
+    "timer" : null,
 
     // The event report callback
     // Should take the form 'function(event)', where 'event' is a table with the key 'message', whose
@@ -46,29 +47,41 @@ disconnectionManager <- {
             }
 
             // Schedule an attempt to re-connect in 'reconnectDelay' seconds
-            imp.wakeup(disconnectionManager.reconnectDelay, function() {
-                if (!server.isconnected()) {
-                    // If we're not connected, send a 'connecting' event to the host app and try to connect
-                    disconnectionManager.retries += 1;
-                    if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"message": "Device connecting", "type" : "connecting"});
-                    server.connect(disconnectionManager.eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
-                } else {
-                    // If we are connected, re-call 'eventHandler()' to make sure the 'connnected' flow is executed
-                    if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"message": "Wakeup code called, but already connected"});
-                    disconnectionManager.eventHandler(SERVER_CONNECTED);
-                }
-            }.bindenv(this));
+            if (disconnectionManager.timer == null) {
+                disconnectionManager.timer = imp.wakeup(disconnectionManager.reconnectDelay, function() {
+                    disconnectionManager.timer = null;
+                    if (!server.isconnected()) {
+                        // If we're not connected, send a 'connecting' event to the host app and try to connect
+                        disconnectionManager.retries += 1;
+                        if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"message": "Device connecting", "type" : "connecting"});
+                        server.connect(disconnectionManager.eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
+                    } else {
+                        // If we are connected, re-call 'eventHandler()' to make sure the 'connnected' flow is executed
+                        if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"message": "Wakeup code called, but already connected"});
+                        disconnectionManager.eventHandler(SERVER_CONNECTED);
+                    }
+                }.bindenv(this));
+            }
         } else {
             // The imp is back online
-            if (disconnectionManager.flag && disconnectionManager.eventCallback != null) {
-                // Send a 'connected' event to the host app
-                // Report the time that the device went offline
-                local now = disconnectionManager.offtime;
-                disconnectionManager.eventCallback({"message": format("Went offline at %02i:%02i:%02i. Reason %i", now.hour, now.min, now.sec, disconnectionManager.reason)});
+            if (disconnectionManager.flag) {
 
-                // Report the time that the device is back online
-                now = date();
-                disconnectionManager.eventCallback({"message": format("Back online at %02i:%02i:%02i. Connection attempts: %i", now.hour, now.min, now.sec, disconnectionManager.retries), "type" : "connected"});
+                if (disconnectionManager.timer != null) {
+                    // For some reason (TBD) we have a timer in play, so cancel it now we're back online
+                    imp.cancelwakeup(disconnectionManager.timer);
+                    disconnectionManager.timer = null;
+                }
+
+                if (disconnectionManager.eventCallback != null) {
+                    // Send a 'connected' event to the host app
+                    // Report the time that the device went offline
+                    local now = disconnectionManager.offtime;
+                    disconnectionManager.eventCallback({"message": format("Went offline at %02i:%02i:%02i. Reason %i", now.hour, now.min, now.sec, disconnectionManager.reason)});
+
+                    // Report the time that the device is back online
+                    now = date();
+                    disconnectionManager.eventCallback({"message": format("Back online at %02i:%02i:%02i. Connection attempts: %i", now.hour, now.min, now.sec, disconnectionManager.retries), "type" : "connected"});
+                }
             }
 
             disconnectionManager.flag = false;

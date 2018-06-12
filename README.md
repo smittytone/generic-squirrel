@@ -30,12 +30,15 @@ Incorporates code which logs impOS and network information. It is intended to be
 - 1.1.0
     - Support `seriallog.nut`
 
-### utilities.nut 2.0.0 ###
+### utilities.nut 2.0.1 ###
 
 A table of utility routines.  Please see the source code for further information.
 
 #### Release Notes #####
 
+- 2.0.1
+    - Fix table naming bug
+    - Reformat table to match JSON format
 - 2.0.0
     - Change table name to *utilities* (lowercase)
 
