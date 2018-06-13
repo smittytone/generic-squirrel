@@ -89,9 +89,12 @@ disconnectionManager <- {
         }
     }
 
-    "start" : function() {
+    "start" : function(timeout = 10) {
+        // Check parameter type, and fix if it's wrong
+        if (typeof timeout != "integer") timeout = 10;
+
         // Register handlers etc.
-        server.setsendtimeoutpolicy(RETURN_ON_ERROR, WAIT_TIL_SENT, 10);
+        server.setsendtimeoutpolicy(RETURN_ON_ERROR, WAIT_TIL_SENT, timeout);
         server.onunexpecteddisconnect(disconnectionManager.eventHandler);
         disconnectionManager.monitoring = true;
         if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"message": "Enabling disconnection monitoring"});
