@@ -1,7 +1,7 @@
 // General utility functions accessed via the table 'utilities'
 // Copyright Tony Smith, 2014-18
 // Licence: MIT
-#version = "2.0.1";
+#version "2.0.1"
 utilities <- {
 
     // HEX CONVERSION FUNCTIONS

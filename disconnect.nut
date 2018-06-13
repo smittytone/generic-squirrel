@@ -1,7 +1,7 @@
 // Provide disconnection functionality as a table of functions and properties
 // Copyright Tony Smith, 2018
 // Licence: MIT
-#version = "1.0.2";
+#version "1.0.2"
 disconnectionManager <- {
 
     // Timeout periods
