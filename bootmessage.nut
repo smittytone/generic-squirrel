@@ -1,7 +1,7 @@
 // Boot device information functions
 // Copyright Tony Smith, 2017-18
 // Licence: MIT
-#version = "2.0.1";
+#version = "2.0.0";
 bootinfo <- {
     "message" : function() {
         // Present OS version and network connection information

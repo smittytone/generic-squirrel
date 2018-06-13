@@ -25,6 +25,7 @@ Incorporates code which logs impOS and network information. It is intended to be
 - 2.0.0
     - Change table name to *bootinfo* (lowercase)
     - Change function names to *message()* and *wakereason()*
+    - Add version number
 - 1.1.1
     - Bug fixes
 - 1.1.0
@@ -39,10 +40,11 @@ A table of utility routines.  Please see the source code for further information
 - 2.0.1
     - Fix table naming bug
     - Reformat table to match JSON format
+    - Add version number
 - 2.0.0
     - Change table name to *utilities* (lowercase)
 
-### disconnect.nut 1.0.1 ###
+### disconnect.nut 1.0.2 ###
 
 Provides DisconnectionManager, a handler for imp connection state. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
 
@@ -55,7 +57,10 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 #### Release Notes ####
 
+- 1.0.2
+    - Add 'timeout' parameter to start()
+    - Add version number to file
 - 1.0.1
-    - Change order of re-connect message: offtime then ontime.
+    - Change order of re-connect message: off-time then on-time
 - 1.0.0
-    - Initial release.
+    - Initial release
