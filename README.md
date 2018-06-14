@@ -22,6 +22,8 @@ Incorporates code which logs impOS and network information. It is intended to be
 
 #### Release Notes #####
 
+- 2.0.1
+    - Add *version()* function to return impOS version number as string
 - 2.0.0
     - Change table name to *bootinfo* (lowercase)
     - Change function names to *message()* and *wakereason()*

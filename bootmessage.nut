@@ -1,19 +1,17 @@
 // Boot device information functions
 // Copyright Tony Smith, 2017-18
 // Licence: MIT
-#version "2.0.0"
+#version "2.0.1"
 bootinfo <- {
     "message" : function() {
         // Present OS version and network connection information
-        // Take the software version string and extract the version number
-        local a = split(imp.getsoftwareversion(), "-");
 
         // Check for 'seriallog' in the root table - if it's there, use it
         // 'seriallog' is added as a global by including seriallog.nut in your code AHEAD of bootmessage.nut
         // NOTE 'seriallog' will always call server.log() too
         local lg = null;
         if ("seriallog" in getroottable()) { lg = seriallog; } else { lg = server; }
-        lg.log("impOS version " + a[2]);
+        lg.log("impOS version " + bootinfo.version());
         lg.log(format("Running \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
         lg.log(format("SHA %s", __EI.DEPLOYMENT_SHA));
 
@@ -49,6 +47,12 @@ bootinfo <- {
         } catch (err) {
             return("Device restarted: Reason unknown");
         }
+    },
+
+    "version" : function() {
+        // Take the software version string and extract the version number
+        local a = split(imp.getsoftwareversion(), "-");
+        return a[2];
     }
 }
 
