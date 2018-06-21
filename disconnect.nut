@@ -24,19 +24,23 @@ disconnectionManager <- {
     "eventCallback" : null,
 
     "eventHandler" : function(reason) {
-        // Called if the server connection is broken or re-established
+        // Called if the server connection is broken or re-established, initially by impOS' unexpected disconnect
+        // code and then repeatedly by server.connect(), below, as it periodically attempts to reconnect
         // Sets 'flag' to true if there is NO connection
+
+        // If we are not checking for unexpected disconnections, bail
         if (!disconnectionManager.monitoring) return;
+
         if (reason != SERVER_CONNECTED) {
-            // We weren't previously disconnected, so mark us as disconnected now
+            // The device wasn't previously disconnected, so set the state to 'disconnected', ie. 'flag' is true
             if (!disconnectionManager.flag) {
-                // Reset the disconnection data
+                // Reset the disconnection state data
                 disconnectionManager.flag = true;
                 disconnectionManager.retries = 0;
                 disconnectionManager.reason = reason;
 
                 // Record the disconnection time for future reference
-                // NOTE connection fails 60s before eventHandler is called
+                // NOTE connection fails 60s before 'eventHandler' is called
                 disconnectionManager.offtime = date();
 
                 // Send a 'disconnected' event to the host app
