@@ -16,6 +16,8 @@ disconnectionManager <- {
     "reason" : SERVER_CONNECTED,
     "retries" : 0,
     "offtime" : null,
+    "codes" : ["Not connected", "No network", "No IP address", "impCloud IP Nor Resolved", "impCloud unreachable",
+               "Connected to impCloud", "No proxy server", "Proxy credentials rejected"],
 
     // The event report callback
     // Should take the form 'function(event)', where 'event' is a table with the key 'message', whose
@@ -47,7 +49,8 @@ disconnectionManager <- {
             } else {
                 // Send a 'still disconnected' event to the host app
                 if (disconnectionManager.eventCallback != null)
-                    disconnectionManager.eventCallback({"type" : "disconnected"});
+                    disconnectionManager.eventCallback({"message": "Device still disconnected",
+                                                        "type" : "disconnected"});
             }
 
             // Schedule an attempt to re-connect in 'reconnectDelay' seconds
@@ -158,5 +161,9 @@ disconnectionManager <- {
     "setCallback" : function(cb = null) {
         // Convenience function for setting the framework's event report callback
         if (cb != null && typeof cb == "function") disconnectionManager.eventCallback = cb;
+    },
+
+    "getReason" : function(code) {
+        return codes[code];
     }
 }
