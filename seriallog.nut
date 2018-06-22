@@ -1,6 +1,6 @@
 // Serial logger
 // Licence: MIT
-#version "2.0.0"
+#version "2.0.1"
 seriallog <- {
     "uart" : null,
     "enabled" : false,
@@ -31,6 +31,8 @@ seriallog <- {
                 u = "0";
             }
             server.log("Read the serial log via hardware.uart" + u);
+        } else {
+            server.log("Read the serial log via the programmed UART");
         }
         seriallog.uart = uart;
         seriallog.uart.configure(baud, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
