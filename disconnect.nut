@@ -128,6 +128,7 @@ disconnectionManager <- {
 
   "connect" : function() {
     // Attempt to connect to the server if we're not connected already
+    // We do this to set our initial state
     disconnectionManager.isConnected = server.isconnected();
     if (!disconnectionManager.isConnected) {
       server.connect(disconnectionManager.eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);

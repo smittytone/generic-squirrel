@@ -59,8 +59,13 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 #### Release Notes ####
 
+- 1.1.0
+    - Add 'sendPolicy' parameter to start() (default: *WAIT_TIL_SENT*)
+    - Set state when start() called
+    - Deal with impOS <= 38 issue with ounexpecteddisconnect() being called twice when IP address lost (ie. WiFi up but router link lost)
+
 - 1.0.2
-    - Add 'timeout' parameter to start()
+    - Add 'timeout' parameter to start() (default: 10s)
     - Add version number to file
 - 1.0.1
     - Change order of re-connect message: off-time then on-time
