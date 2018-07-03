@@ -96,8 +96,10 @@ disconnectionManager <- {
     // This is an intercept function for 'server.onunexpecteddisconnect()'
     // to handle the double-calling of this method's registered handler
     // when the imp loses its link to DHCP but still has WiFi
-    if (reason == NO_IP_ADDRESS && disconnectionManager.noIP) return;
-    disconnectionManager.noIP = true;
+    if (reason == NO_IP_ADDRESS) {
+      if (disconnectionManager.noIP) return;
+      disconnectionManager.noIP = true;
+    }
     disconnectionManager.eventHandler(reason);
   },
 
