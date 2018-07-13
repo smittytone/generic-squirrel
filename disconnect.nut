@@ -47,14 +47,12 @@ disconnectionManager <- {
         disconnectionManager.offtime = date();
 
         // Send a 'disconnected' event to the host app
-        if (disconnectionManager.eventCallback != null)
-          disconnectionManager.eventCallback({"message": "Device unexpectedly disconnected", "type" : "disconnected"});
+        disconnectionManager.wakeup({"message": "Device unexpectedly disconnected", "type" : "disconnected"});
       } else {
         // Send a 'still disconnected' event to the host app
-        if (disconnectionManager.eventCallback != null)
-          local m = disconnectionManager.formatTimeString();
-          disconnectionManager.eventCallback({"message": "Device still disconnected at" + m,
-                                              "type" : "disconnected"});
+        local m = disconnectionManager.formatTimeString();
+        disconnectionManager.wakeup({"message": "Device still disconnected at" + m,
+                                     "type" : "disconnected"});
       }
 
       // Schedule an attempt to re-connect in 'reconnectDelay' seconds
@@ -62,31 +60,27 @@ disconnectionManager <- {
         if (!server.isconnected()) {
           // If we're not connected, send a 'connecting' event to the host app and try to connect
           disconnectionManager.retries += 1;
-          if (disconnectionManager.eventCallback != null)
-            disconnectionManager.eventCallback({"message": "Device connecting", "type" : "connecting"});
+          disconnectionManager.wakeup({"message": "Device connecting", "type" : "connecting"});
           server.connect(disconnectionManager.eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
         } else {
           // If we are connected, re-call 'eventHandler()' to make sure the 'connnected' flow is executed
-          if (disconnectionManager.eventCallback != null)
-            disconnectionManager.eventCallback({"message": "Wakeup code called, but already connected"});
+          disconnectionManager.wakeup({"message": "Wakeup code called, but already connected"});
           disconnectionManager.eventHandler(SERVER_CONNECTED);
         }
       }.bindenv(this));
     } else {
       // The imp is back online
       if (!disconnectionManager.isConnected) {
-        if (disconnectionManager.eventCallback != null) {
-          // Send a 'connected' event to the host app
-          // Report the time that the device went offline
-          local m = disconnectionManager.formatTimeString(disconnectionManager.offtime);
-          m = format("Went offline at %s. Reason %i", m, disconnectionManager.reason);
-          imp.wakeup(0, disconnectionManager.eventCallback({"message": m}));
+        // Send a 'connected' event to the host app
+        // Report the time that the device went offline
+        local m = disconnectionManager.formatTimeString(disconnectionManager.offtime);
+        m = format("Went offline at %s. Reason %i", m, disconnectionManager.reason);
+        disconnectionManager.wakeup({"message": m});
 
-          // Report the time that the device is back online
-          m = disconnectionManager.formatTimeString();
-          m = format("Back online at %s. Connection attempts: %i", m, disconnectionManager.retries);
-          imp.wakeup(0, disconnectionManager.eventCallback({"message": m, "type" : "connected"}));
-        }
+        // Report the time that the device is back online
+        m = disconnectionManager.formatTimeString();
+        m = format("Back online at %s. Connection attempts: %i", m, disconnectionManager.retries);
+        disconnectionManager.wakeup({"message": m, "type" : "connected"});
       }
 
       // Re-set state data
@@ -117,9 +111,7 @@ disconnectionManager <- {
     server.setsendtimeoutpolicy(RETURN_ON_ERROR, sendPolicy, timeout);
     server.onunexpecteddisconnect(disconnectionManager.hasDisconnected);
     disconnectionManager.monitoring = true;
-
-    if (disconnectionManager.eventCallback != null)
-      disconnectionManager.eventCallback({"message": "Enabling disconnection monitoring"});
+    disconnectionManager.wakeup({"message": "Enabling disconnection monitoring"});
 
     // Check for initial connection (give it time to connect)
     disconnectionManager.connect();
@@ -128,8 +120,7 @@ disconnectionManager <- {
   "stop" : function() {
     // De-Register handlers etc.
     disconnectionManager.monitoring = false;
-    if (disconnectionManager.eventCallback != null)
-      disconnectionManager.eventCallback({"message": "Disabling disconnection monitoring"});
+    disconnectionManager.wakeup({"message": "Disabling disconnection monitoring"});
   },
 
   "connect" : function() {
@@ -138,10 +129,9 @@ disconnectionManager <- {
     disconnectionManager.isConnected = server.isconnected();
     if (!disconnectionManager.isConnected) {
       server.connect(disconnectionManager.eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
-      if (disconnectionManager.eventCallback != null)
-        disconnectionManager.eventCallback({"message": "Manually connecting to server", "type": "connecting"});
+      disconnectionManager.wakeup({"message": "Manually connecting to server", "type": "connecting"});
     } else {
-      if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"type": "connected"});
+      disconnectionManager.wakeup({"type": "connected"});
     }
   },
 
@@ -151,10 +141,9 @@ disconnectionManager <- {
       server.flush(10);
       server.disconnect();
       disconnectionManager.isConnected = false;
-      if (disconnectionManager.eventCallback != null)
-        disconnectionManager.eventCallback({"message": "Manually disconnected from server", "type": "disconnected"});
+      disconnectionManager.wakeup({"message": "Manually disconnected from server", "type": "disconnected"});
     } else {
-      if (disconnectionManager.eventCallback != null) disconnectionManager.eventCallback({"type": "disconnected"});
+      disconnectionManager.wakeup({"type": "disconnected"});
     }
   },
 
@@ -175,5 +164,14 @@ disconnectionManager <- {
     if (n.hour > 23) n.hour -= 24;
     local z = bst ? "+01:00" : "UTC";
     return format("%02i:%02i:%02i %s", n.hour, n.min, n.sec, z);
+  },
+
+  "wakeup": function(data) {
+    // Queue up a message post with the supplied data
+    if (disconnectionManager.eventCallback != null) {
+      imp.wakeup(0, function() {
+        disconnectionManager.eventCallback(data);
+      });
+    }
   }
 }
