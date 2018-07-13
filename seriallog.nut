@@ -1,6 +1,6 @@
 // Serial logger
 // Licence: MIT
-#version "2.0.1"
+#version "2.0.2"
 seriallog <- {
     "uart" : null,
     "enabled" : false,
@@ -55,7 +55,12 @@ seriallog <- {
     "settimestring": function(time = null) {
         // If 'time' is supplied, it must be a table formatted as per the output of 'date()'
         local now = time != null ? time : date();
-        return format("%04d-%02d-%02d %02d:%02d:%02d", now.year, now.month + 1, now.day, now.hour, now.min, now.sec);
+        local bst = false;
+        if ("utilities" in getroottable()) bst = utilities.isBST();
+        now.hour += (bst ? 1 : 0);
+        if (now.hour > 23) now.hour -= 24;
+        local z = bst ? "+01:00" : "UTC";
+        return format("%04d-%02d-%02d %02d:%02d:%02d %s", now.year, now.month + 1, now.day, now.hour, now.min, now.sec, z);
     }
 }
 

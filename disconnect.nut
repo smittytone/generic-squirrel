@@ -76,12 +76,17 @@ disconnectionManager <- {
           // Report the time that the device went offline
           local now = disconnectionManager.offtime;
           local m = format("Went offline at %02i:%02i:%02i. Reason %i", now.hour, now.min, now.sec, disconnectionManager.reason);
-          disconnectionManager.eventCallback({"message": m});
+          imp.wakeup(0, disconnectionManager.eventCallback({"message": m}));
 
           // Report the time that the device is back online
+          local bst = false;
           now = date();
-          m = format("Back online at %02i:%02i:%02i. Connection attempts: %i", now.hour, now.min, now.sec, disconnectionManager.retries);
-          disconnectionManager.eventCallback({"message": m, "type" : "connected"});
+          if ("utilities" in getroottable()) bst = utilities.isBST();
+          now.hour += (bst ? 1 : 0);
+          if (now.hour > 23) now.hour -= 24;
+          local z = bst ? "+01:00" : "UTC";
+          m = format("Back online at %02i:%02i:%02i %s. Connection attempts: %i", now.hour, now.min, now.sec, z, disconnectionManager.retries);
+          imp.wakeup(0, disconnectionManager.eventCallback({"message": m, "type" : "connected"}));
         }
       }
 
