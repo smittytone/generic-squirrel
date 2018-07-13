@@ -1,7 +1,10 @@
 // General utility functions accessed via the table 'utilities'
 // Copyright Tony Smith, 2014-18
 // Licence: MIT
+
+// Code version for Squinter
 #version "2.0.2"
+
 utilities <- {
 
     // HEX CONVERSION FUNCTIONS
@@ -151,10 +154,10 @@ utilities <- {
         return false;
     },
 
-    "bstCheck" : function() {
+    "bstCheck" : function(n = null) {
         // Checks the current date for British Summer Time,
         // returning true or false accordingly
-        local n = date();
+        if (n == null) n = date();
         if (n.month > 2 && n.month < 9) return true;
 
         if (n.month == 2) {
@@ -173,13 +176,13 @@ utilities <- {
         return false;
     },
 
-    "isBST": function() {
-        return bstCheck();
+    "isBST": function(n) {
+        return bstCheck(n);
     },
 
-    "dstCheck" : function() {
+    "dstCheck" : function(n = null) {
         // Checks the current date for US Daylight Savings Time, returning true or false accordingly
-        local n = date();
+        if (n == null) n = date();
         if (n.month > 2 && n.month < 10) return true;
 
         if (n.month == 2) {
@@ -199,8 +202,8 @@ utilities <- {
         return false;
     },
 
-    "isDST": function() {
-        return dstCheck();
+    "isDST": function(n) {
+        return dstCheck(n);
     },
 
     // CALENDAR FUNCTIONS (PRIVATE)
