@@ -1,7 +1,10 @@
 // Provide disconnection functionality as a table of functions and properties
 // Copyright Tony Smith, 2018
 // Licence: MIT
+
+// Code version for Squinter
 #version "1.1.0"
+
 disconnectionManager <- {
 
   // Timeout periods
@@ -49,8 +52,9 @@ disconnectionManager <- {
       } else {
         // Send a 'still disconnected' event to the host app
         if (disconnectionManager.eventCallback != null)
-         disconnectionManager.eventCallback({"message": "Device still disconnected",
-                                             "type" : "disconnected"});
+          local m = disconnectionManager.formatTimeString();
+          disconnectionManager.eventCallback({"message": "Device still disconnected at" + m,
+                                              "type" : "disconnected"});
       }
 
       // Schedule an attempt to re-connect in 'reconnectDelay' seconds
@@ -74,18 +78,13 @@ disconnectionManager <- {
         if (disconnectionManager.eventCallback != null) {
           // Send a 'connected' event to the host app
           // Report the time that the device went offline
-          local now = disconnectionManager.offtime;
-          local m = format("Went offline at %02i:%02i:%02i. Reason %i", now.hour, now.min, now.sec, disconnectionManager.reason);
+          local m = disconnectionManager.formatTimeString(disconnectionManager.offtime);
+          m = format("Went offline at %s. Reason %i", m, disconnectionManager.reason);
           imp.wakeup(0, disconnectionManager.eventCallback({"message": m}));
 
           // Report the time that the device is back online
-          local bst = false;
-          now = date();
-          if ("utilities" in getroottable()) bst = utilities.isBST();
-          now.hour += (bst ? 1 : 0);
-          if (now.hour > 23) now.hour -= 24;
-          local z = bst ? "+01:00" : "UTC";
-          m = format("Back online at %02i:%02i:%02i %s. Connection attempts: %i", now.hour, now.min, now.sec, z, disconnectionManager.retries);
+          m = disconnectionManager.formatTimeString();
+          m = format("Back online at %s. Connection attempts: %i", m, disconnectionManager.retries);
           imp.wakeup(0, disconnectionManager.eventCallback({"message": m, "type" : "connected"}));
         }
       }
@@ -166,5 +165,15 @@ disconnectionManager <- {
 
   "getReason" : function(code) {
     return codes[code];
+  },
+
+  "formatTimeString" : function(n = null) {
+    local bst = false;
+    if ("utilities" in getroottable()) bst = utilities.isBST();
+    if (n == null) n = date();
+    n.hour += (bst ? 1 : 0);
+    if (n.hour > 23) n.hour -= 24;
+    local z = bst ? "+01:00" : "UTC";
+    return format("%02i:%02i:%02i %s", n.hour, n.min, n.sec, z);
   }
 }
