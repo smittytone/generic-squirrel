@@ -176,7 +176,7 @@ utilities <- {
         return false;
     },
 
-    "isBST": function(n) {
+    "isBST": function(n = null) {
         return bstCheck(n);
     },
 
@@ -202,7 +202,7 @@ utilities <- {
         return false;
     },
 
-    "isDST": function(n) {
+    "isDST": function(n = null) {
         return dstCheck(n);
     },
 
