@@ -53,6 +53,7 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 
 - 2.0.2
   - Add *isDST()* and *isBST()* convenience methods.
+  - All *bstCheck()* and *dstCheck()* to take optional date values for checks (Default: current time and date)
 - 2.0.1
   - Fix table naming bug
   - Reformat table to match JSON format
@@ -62,7 +63,7 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 
 ## disconnect.nut 1.1.0 ##
 
-Provides DisconnectionManager, a handler for imp connection state. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
+Provides *disconnectionManager*, a gloabl object which operates as a handler for imp connection states. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
 
 The properties *disconnectionManager.reconnectTimeout* and *disconnectionManager.reconnectDelay* can be used to set, respectively, the period after which a disconnected imp will attempt to reconnect, and the timeout period it allows for the reconnection attempt. These values default to, respectively, 60 and 30 seconds.
 
