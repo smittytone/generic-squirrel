@@ -74,7 +74,7 @@ disconnectionManager <- {
         // Send a 'connected' event to the host app
         // Report the time that the device went offline
         local m = disconnectionManager.formatTimeString(disconnectionManager.offtime);
-        m = format("Went offline at %s. Reason %i", m, disconnectionManager.reason);
+        m = format("Went offline at %s. Reason: %s", m, disconnectionManager.getReason(disconnectionManager.reason));
         disconnectionManager.wakeup({"message": m});
 
         // Report the time that the device is back online
