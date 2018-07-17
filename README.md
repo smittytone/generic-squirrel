@@ -6,6 +6,8 @@ Squirrel code used in multiple projects. The `.nut` files kept here can be cut a
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
+The code does not now call *configure()* immediately, to allow you to so do first. If you do not, *configure()* will be called the first time you attempt to send a log message.
+
 The default UART depends on the the type of imp on which the code is running:
 
 | imp | Default UART |
@@ -22,6 +24,7 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 
 - 2.0.1
   - Add support for *utilities* *(see below)* to set time string correctly
+  - Add TX buffer size setting to *configure()*
 - 2.0.0
   - Convert from class to table as per other files
   - Table is named to *seriallog* (lowercase)
