@@ -3,17 +3,17 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.0.1"
+#version "2.1.0"
 
 bootinfo <- {
+    // Public Methods
     "message" : function() {
         // Present OS version and network connection information
 
         // Check for 'seriallog' in the root table - if it's there, use it
         // 'seriallog' is added as a global by including seriallog.nut in your code AHEAD of bootmessage.nut
         // NOTE 'seriallog' will always call server.log() too
-        local lg = null;
-        if ("seriallog" in getroottable()) { lg = seriallog; } else { lg = server; }
+        local lg = "seriallog" in getroottable() ? seriallog : server;
         lg.log("impOS version " + bootinfo.version());
         lg.log(format("Running \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
         lg.log(format("SHA %s", __EI.DEPLOYMENT_SHA));
@@ -30,15 +30,22 @@ bootinfo <- {
             local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : ("ssid" in w ? w.ssid : "Unknown")) : "Unknown";
 
             // Get the type of network we are using (WiFi or Ethernet)
-            local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : "Ethernet");
+            local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : w.type);
             lg.log(t + " with IP address " + i.ipv4.address);
         }
 
         // Present the reason for the start-up
-        lg.log(bootinfo.wakereason());
+        lg.log(bootinfo._wakereason());
     },
 
-    "wakereason" : function() {
+    "version" : function() {
+        // Take the software version string and extract the version number
+        local a = split(imp.getsoftwareversion(), "-");
+        return a[2];
+    },
+
+    // Private Methods **DO NOT CALL DIRECTLY**
+    "_wakereason" : function() {
         // Return the result of hardware.wakereason() as a full message string
         local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
                          "Application code updated", "Squirrel error during the last run"
@@ -50,12 +57,6 @@ bootinfo <- {
         } catch (err) {
             return("Device restarted: Reason unknown");
         }
-    },
-
-    "version" : function() {
-        // Take the software version string and extract the version number
-        local a = split(imp.getsoftwareversion(), "-");
-        return a[2];
     }
 }
 
