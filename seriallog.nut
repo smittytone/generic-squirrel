@@ -2,13 +2,17 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.0.2"
+#version "2.0.1"
 
 seriallog <- {
+    // Public Properties
     "uart" : null,
     "enabled" : false,
     "configured": false,
-    "configure" : function(uart = null, baud = 115200, txsize = 160, enable = true) {
+    "txsize": 160,
+    
+    // Public Methods
+    "configure" : function(uart = null, baudrate = 115200, txsize = 160, enable = true) {
         // Pass a UART object, eg. hardware.uart6E; your preferred baud rate; and initial state
         // NOTE UART is enabled by default and UART will be chosen for you if you pass in null
         //      If you don't call configure, serial logging is disabled by default but
@@ -39,8 +43,11 @@ seriallog <- {
             server.log("Read the serial log via the programmed UART");
         }
         seriallog.uart = uart;
+        if (typeof txsize != "integer") txsize = 160;
+        if (txsize < 80) txsize = 80;
+        seriallog.txsize = txsize;
         seriallog.uart.settxfifosize(txsize);
-        seriallog.uart.configure(baud, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
+        seriallog.uart.configure(baudrate, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
         seriallog.configured = true;
         if (typeof enable == "bool") seriallog.enabled = enable;
     },
@@ -55,22 +62,35 @@ seriallog <- {
     },
 
     "log": function(message) {
-        if (seriallog.enabled) {
-            if (!seriallog.configured) seriallog.configure();
-            seriallog.uart.write("[IMP LOG] " + seriallog.settimestring() + " " + message + "\r\n");
-        }
+        seriallog._logtouart(message);
         server.log(message);
     },
 
     "error": function(message) {
-        if (seriallog.enabled) {
-            if (!seriallog.configured) seriallog.configure();
-            seriallog.uart.write("[IMP ERR] " + seriallog.settimestring() + " " + message + "\r\n");
-        }
+        seriallog._logtouart(message);
         server.error(message);
     },
 
-    "settimestring": function(time = null) {
+    // Private Methods **DO NOT CALL DIRECTLY**
+    "_logtouart": function(message) {
+        if (seriallog.enabled) {
+            if (!seriallog.configured) seriallog.configure();
+            local s = "[IMP LOG] " + seriallog._settimestring() + " " + message;
+            local done = false;
+            do {
+                local t = "";
+                if (s.len() > seriallog.txsize) {
+                    t = s.slice(0, seriallog.txsize);
+                    s = s.slice(seriallog.txsize);
+                } else {
+                    done = true;
+                }
+                seriallog.uart.write(t + "\r\n");
+            } while (!done);
+        }
+    },
+
+    "_settimestring": function(time = null) {
         // If 'time' is supplied, it must be a table formatted as per the output of 'date()'
         local now = time != null ? time : date();
         local bst = false;
