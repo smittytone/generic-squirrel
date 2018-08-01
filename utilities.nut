@@ -1,7 +1,10 @@
 // General utility functions accessed via the table 'utilities'
 // Copyright Tony Smith, 2014-18
 // Licence: MIT
-#version "2.0.1"
+
+// Code version for Squinter
+#version "2.0.2"
+
 utilities <- {
 
     // HEX CONVERSION FUNCTIONS
@@ -15,7 +18,7 @@ utilities <- {
             i = (i << 4) + n;
         }
         return i;
-    }
+    },
 
     "hexStringToBlob" : function(hs) {
         hs = hs.tolower();
@@ -31,13 +34,13 @@ utilities <- {
             r[i] = hi << 4 | lo;
         }
         return r;
-    }
+    },
 
     "integerToHexString" : function (i, r = 2) {
         if (r % 2 != 0) r++;
         local fs = "0x%0" + r.tostring() + "x";
         return format(fs, i);
-    }
+    },
 
     "blobToHexString" : function (b, r = 2) {
         local s = "0x";
@@ -45,7 +48,7 @@ utilities <- {
         local fs = "%0" + r.tostring() + "x";
         for (local i = 0 ; i < b.len() ; i++) s += format(fs, b[i]);
         return s;
-    }
+    },
 
     "toString" : function (o) {
         switch (typeof(o)) {
@@ -72,19 +75,19 @@ utilities <- {
             default:
                 return typeof(o);
         }
-    }
+    },
 
     // RANDOM NUMBER FUNCTIONS
 
     "frnd" : function(m) {
         // Return a pseudorandom float between 0 and max, inclusive
         return (1.0 * math.rand() / RAND_MAX) * (m + 1);
-    }
+    },
 
     "rnd" : function(m) {
         // Return a pseudorandom integer between 0 and max, inclusive
         return utilities.frnd(m).tointeger();
-    }
+    },
 
     // NUMBER FORMAT FUNCTIONS
 
@@ -128,7 +131,7 @@ utilities <- {
         }
 
         return nn;
-    }
+    },
 
     // CALENDAR FUNCTIONS (PUBLIC)
 
@@ -144,17 +147,17 @@ utilities <- {
             ad = ad + a[i];
         }
         return (ad % 7) - 1;
-    }
+    },
 
     "isLeapYear" : function(y) {
         if (utilities._isLeapYear(y) == 1) return true;
         return false;
-    }
+    },
 
-    "bstCheck" : function() {
+    "bstCheck" : function(n = null) {
         // Checks the current date for British Summer Time,
         // returning true or false accordingly
-        local n = date();
+        if (n == null) n = date();
         if (n.month > 2 && n.month < 9) return true;
 
         if (n.month == 2) {
@@ -171,11 +174,15 @@ utilities <- {
             }
         }
         return false;
-    }
+    },
 
-    "dstCheck" : function() {
+    "isBST": function(n = null) {
+        return bstCheck(n);
+    },
+
+    "dstCheck" : function(n = null) {
         // Checks the current date for US Daylight Savings Time, returning true or false accordingly
-        local n = date();
+        if (n == null) n = date();
         if (n.month > 2 && n.month < 10) return true;
 
         if (n.month == 2) {
@@ -193,7 +200,11 @@ utilities <- {
         }
 
         return false;
-    }
+    },
+
+    "isDST": function(n = null) {
+        return dstCheck(n);
+    },
 
     // CALENDAR FUNCTIONS (PRIVATE)
 
@@ -202,12 +213,12 @@ utilities <- {
         if (utilities._isLeapYear(y) == 1) t = t - 1;
         t = t - ((y / 100) - (1752 / 100)) + ((y / 400) - (1752 / 400));
         return t;
-    }
+    },
 
     "_isLeapYear" : function(y) {
         if ((y % 400) || ((y % 100) && !(y % 4))) return 1;
         return 0;
-    }
+    },
 
     // UUID ACCESSOR FUNCTIONS
 
@@ -226,7 +237,7 @@ utilities <- {
             rnds.writen(((1.0 * math.rand() / RAND_MAX) * 256).tointeger(), 'b');
         }
         return ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring();
-    }
+    },
 
     // I2C FUNCTIONS
 
