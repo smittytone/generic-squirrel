@@ -105,7 +105,7 @@ disconnectionManager <- {
         // Send a 'still disconnected' event to the host app
         local m = disconnectionManager._formatTimeString();
         disconnectionManager._wakeup({"message": "Device still disconnected at" + m,
-                                     "type" : "disconnected"});
+                                      "type" : "disconnected"});
       }
 
       // Schedule an attempt to re-connect in 'reconnectDelay' seconds
@@ -117,7 +117,7 @@ disconnectionManager <- {
           server.connect(disconnectionManager._eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
         } else {
           // If we are connected, re-call 'eventHandler()' to make sure the 'connnected' flow is executed
-          disconnectionManager._wakeup({"message": "Wakeup code called, but already connected"});
+          // disconnectionManager._wakeup({"message": "Wakeup code called, but device already connected"});
           disconnectionManager._eventHandler(SERVER_CONNECTED);
         }
       }.bindenv(this));
@@ -147,9 +147,10 @@ disconnectionManager <- {
     // This is an intercept function for 'server.onunexpecteddisconnect()'
     // to handle the double-calling of this method's registered handler
     // when the imp loses its link to DHCP but still has WiFi
-    if (disconnectionManager._noIP) return;
-    disconnectionManager._noIP = true;
-    disconnectionManager._eventHandler(reason);
+    if (!disconnectionManager._noIP) {
+        disconnectionManager._noIP = true;
+        disconnectionManager._eventHandler(reason);
+    }
   },
 
   "_getReason" : function(code) {
