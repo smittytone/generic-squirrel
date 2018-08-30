@@ -3,7 +3,7 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.0.0"
+#version "2.0.1"
 
 disconnectionManager <- {
 
@@ -127,7 +127,7 @@ disconnectionManager <- {
         // Send a 'connected' event to the host app
         // Report the time that the device went offline
         local m = disconnectionManager._formatTimeString(disconnectionManager.offtime);
-        m = format("Went offline at %s. Reason: %s", m, disconnectionManager._getReason(disconnectionManager.reason));
+        m = format("Went offline at %s. Reason: %s (%i)", m, disconnectionManager._getReason(disconnectionManager.reason), disconnectionManager.reason);
         disconnectionManager._wakeup({"message": m});
 
         // Report the time that the device is back online
