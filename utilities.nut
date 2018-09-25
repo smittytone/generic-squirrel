@@ -250,5 +250,46 @@ utilities <- {
         for (local i = 2 ; i < 256 ; i += 2) {
             if (i2c.read(i, "", 1) != null) server.log(format("Device at 8-bit address: 0x%02X (7-bit address: 0x%02X)", i, (i >> 1)));
         }
+    },
+
+    // BASIC STRING FUNCTIONS
+
+    "mid": function(s,l,c = 0) {
+        if (l > 0) l--;
+        if (l < 0) l == 0;
+        if (c == 0) c = s.len() - l;
+        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
+        return s.slice(l,l+c);
+    },
+
+    "left": function(s,r) {
+        if (r == 0) r = 1;
+        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
+        return s.slice(0,r);
+    },
+
+    "right": function(s,l) {
+        if (l == 0) l = 1
+        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
+        return s.slice(s.len()-l);
+    },
+
+    "chr": function(v) {
+        if (typeof v == "float") v = v.tointeger();
+        if (typeof v != "integer") throw "?TYPE MISMATCH ERROR";
+        if (v < 0 || v > 255 ) throw "?ILLEGAL QUANTITY ERROR";
+        return format("%c",v);
+    },
+
+    "asc": function(s) {
+        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
+        if (s.len() < 1) throw "?ILLEGAL QUANTITY ERROR";
+        return s[0];
+    },
+
+    "sign": function(v) {
+        if (v < 0) return -1;
+        if (v > 0) return 1;
+        return 0;
     }
 }
