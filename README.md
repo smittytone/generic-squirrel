@@ -119,12 +119,14 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
   - Add *configure()* function &mdash; if not called, serial logging is disabled
   - Auto-select UART *configure()*, if necessary
 
-## utilities.nut 2.0.2 ##
+## utilities.nut 2.1.0 ##
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
 #### Release Notes ####
 
+- 2.1.0
+  - Add *mid*, *left*, *right*, *asc*, *chr* functions for BASIC-style string manipulation
 - 2.0.2
   - Add *isDST()* and *isBST()* convenience methods
   - All *bstCheck()* and *dstCheck()* to take optional date values for checks (Default: current time and date)
