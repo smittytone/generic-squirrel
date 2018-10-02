@@ -3,7 +3,7 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.1.0"
+#version "2.2.0"
 
 bootinfo <- {
     // Public Methods
@@ -27,11 +27,15 @@ bootinfo <- {
 
         if (w != null) {
             // Get the SSID of the network the device is connected to (or fallback to the last known network)
-            local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : ("ssid" in w ? w.ssid : "Unknown")) : "Unknown";
-
-            // Get the type of network we are using (WiFi or Ethernet)
-            local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : w.type);
-            lg.log(t + " with IP address " + i.ipv4.address);
+            if (w.type != "cell") {
+                local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : ("ssid" in w ? w.ssid : "Unknown")) : "Unknown";
+                
+                // Get the type of network we are using (WiFi or Ethernet)
+                local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : w.type);
+                lg.log(t + " with IP address " + i.ipv4.address);
+            } else {
+                lg.log("Connected by cellular (IMEI " + w.imei + ")");
+            }
         }
 
         // Present the reason for the start-up
@@ -51,7 +55,7 @@ bootinfo <- {
                          "Application code updated", "Squirrel error during the last run"
                          "This device has a new impOS", "Woken by a snooze-and-retry event",
                          "imp003 Reset pin triggered", "This device has just been re-configured",
-                         "Restarted by server.restart()" ];
+                         "Restarted by server.restart()", "VBAT powered during a cold start" ];
         try {
             return("Device restarted: " + causes[hardware.wakereason()]);
         } catch (err) {
