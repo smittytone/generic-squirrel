@@ -2,17 +2,17 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.0.1"
+#version "2.0.2"
 
 seriallog <- {
     // Public Properties
     "uart" : null,
     "enabled" : false,
     "configured": false,
-    "txsize": 160,
+    "txsize": 80,
     
     // Public Methods
-    "configure" : function(uart = null, baudrate = 115200, txsize = 160, enable = true) {
+    "configure" : function(uart = null, baudrate = 115200, txsize = 80, enable = true) {
         // Pass a UART object, eg. hardware.uart6E; your preferred baud rate; and initial state
         // NOTE UART is enabled by default and UART will be chosen for you if you pass in null
         //      If you don't call configure, serial logging is disabled by default but
@@ -43,8 +43,7 @@ seriallog <- {
             server.log("Read the serial log via the programmed UART");
         }
         seriallog.uart = uart;
-        if (typeof txsize != "integer") txsize = 160;
-        if (txsize < 80) txsize = 80;
+        if (typeof txsize != "integer" || txsize < 80) txsize = 80;
         seriallog.txsize = txsize;
         seriallog.uart.settxfifosize(txsize);
         seriallog.uart.configure(baudrate, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
@@ -75,14 +74,17 @@ seriallog <- {
     "_logtouart": function(message) {
         if (seriallog.enabled) {
             if (!seriallog.configured) seriallog.configure();
-            local s = "[IMP LOG] " + seriallog._settimestring() + " " + message;
+            local s = "[IMP LOG] (" + seriallog._settimestring() + ") " + message;
+            
+            // Break the message into lines of 'txsize' characters (last may be less)
             local done = false;
             do {
                 local t = "";
                 if (s.len() > seriallog.txsize) {
                     t = s.slice(0, seriallog.txsize);
-                    s = s.slice(seriallog.txsize);
+                    s = s.slice(s.len() - seriallog.txsize);
                 } else {
+                    t = s;
                     done = true;
                 }
                 seriallog.uart.write(t + "\r\n");
