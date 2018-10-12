@@ -75,7 +75,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 - 1.0.0
   - Initial release
 
-## seriallog.nut 2.0.1 ##
+## seriallog.nut 2.0.2 ##
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
@@ -111,6 +111,9 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
  
 #### Release Notes ####
 
+- 2.0.2
+  - Fix line-splitting bug
+  - Reformat output: bracket timestamp
 - 2.0.1
   - Add support for *utilities* *(see below)* to set time string correctly
   - Add TX buffer size setting to *configure()*
