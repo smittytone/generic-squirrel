@@ -262,13 +262,13 @@ utilities <- {
         return s.slice(l,l+c);
     },
 
-    "left": function(s,r) {
+    "left": function(s,r=0) {
         if (r == 0) r = 1;
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         return s.slice(0,r);
     },
 
-    "right": function(s,l) {
+    "right": function(s,l=0) {
         if (l == 0) l = 1
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         return s.slice(s.len()-l);
