@@ -3,7 +3,7 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.2.0"
+#version "2.2.1"
 
 bootinfo <- {
     // Public Methods
@@ -54,7 +54,7 @@ bootinfo <- {
         local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
                          "Application code updated", "Squirrel error during the last run"
                          "This device has a new impOS", "Woken by a snooze-and-retry event",
-                         "imp003 Reset pin triggered", "This device has just been re-configured",
+                         "Reset pin triggered", "This device has just been re-configured",
                          "Restarted by server.restart()", "VBAT powered during a cold start" ];
         try {
             return("Device restarted: " + causes[hardware.wakereason()]);

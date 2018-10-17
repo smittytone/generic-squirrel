@@ -2,7 +2,7 @@
 
 Squirrel code used in multiple projects. The `.nut` files kept here can be cut and pasted into project source code or integrated via [Squinter](https://smittytone.github.io/squinter/version2/index.html).
 
-## bootmessage.nut 2.2.0 ##
+## bootmessage.nut 2.2.1 ##
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Compatible with **seriallog.nut**.
 
@@ -13,6 +13,8 @@ Incorporates code which logs impOS and network information. It is intended to be
 
 #### Release Notes #####
 
+- 2.2.1
+  - Remove imp type (imp003) from reset button wake reason
 - 2.2.0
   - Add cellular imp support
 - 2.1.0
