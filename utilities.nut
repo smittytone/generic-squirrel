@@ -100,11 +100,7 @@ utilities <- {
         }
 
         if (typeof n == "string") {
-            if (d == 0) {
-                n = n.tointeger();
-            } else {
-                n = n.tofloat();
-            }
+            n = d == 0 ? n.tointeger() : n.tofloat();
         } else if (typeof n != "integer" && typeof n != "float") {
             return n;
         }
@@ -222,21 +218,23 @@ utilities <- {
 
     // UUID ACCESSOR FUNCTIONS
 
+    // We create this string here for later use, but only populte it if it is actually needed
     "uuid" : function() {
-        if (!("UUIDbytesToHex" in getroottable())) {
-            ::UUIDbytesToHex <- [];
-            if (::UUIDbytesToHex.len() == 0) {
-                for (local i = 0 ; i < 256 ; i++) {
-                    ::UUIDbytesToHex.append(format("%02X", (i + 0x100)).slice(1));
-                }
-            }
-        }
-        local i = 0;
+        // Randomize 16 bytes (128 bits)
         local rnds = blob(16);
-        for (local j = 0 ; j < 16 ; j++) {
-            rnds.writen(((1.0 * math.rand() / RAND_MAX) * 256).tointeger(), 'b');
+        for (local i = 0 ; i < 16 ; i++) rnds.writen(((1.0 * math.rand() / RAND_MAX) * 256.0).tointeger(), 'b');
+
+        // Adjust certain bits according to RFC 4122 section 4.4
+        rnds[6] = 0x40 | (rnds[6] & 0x0F);
+        rnds[8] = 0x80 | (rnds[8] & 0x3F);
+
+        // Create an return the UUID string
+        local s = "";
+        for (local i = 0 ; i < 16 ; i++) {
+            s = s + format("%02X", rnds[i]);
+            if (i == 3 || i == 5 || i == 7 || i == 9) s = s + "-";
         }
-        return ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + "-" + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring() + ::UUIDbytesToHex[rnds[i++]].tostring();
+        return s;
     },
 
     // I2C FUNCTIONS
