@@ -2,6 +2,8 @@
 
 Squirrel code used in multiple projects. The `.nut` files kept here can be cut and pasted into project source code or integrated via [Squinter](https://smittytone.github.io/squinter/version2/index.html).
 
+**Note** Updates are made regularly to the `develop` branch, which is merged into `master` on a (roughly) monthly basis.
+
 ## bootmessage.nut 2.2.1 ##
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Compatible with **seriallog.nut**.
@@ -126,12 +128,14 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
   - Add *configure()* function &mdash; if not called, serial logging is disabled
   - Auto-select UART *configure()*, if necessary
 
-## utilities.nut 2.1.0 ##
+## utilities.nut 2.1.1 ##
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
 #### Release Notes ####
 
+- 2.1.1
+    - Correct RFC 4412 4.4 behaviour for *uuid()*
 - 2.1.0
   - Add *mid*, *left*, *right*, *asc*, *chr* functions for BASIC-style string manipulation
 - 2.0.2
