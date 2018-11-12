@@ -16,20 +16,20 @@ Incorporates code which logs impOS and network information. It is intended to be
 #### Release Notes #####
 
 - 2.2.1
-  - Remove imp type (imp003) from reset button wake reason
+    - Remove imp type (imp003) from reset button wake reason
 - 2.2.0
-  - Add cellular imp support
+    - Add cellular imp support
 - 2.1.0
-  - Add *version()* function to return impOS version number as string
-  - Remove *wakereason()* as a public method
+    - Add *version()* function to return impOS version number as string
+    - Remove *wakereason()* as a public method
 - 2.0.0
-  - Change table name to *bootinfo* (lowercase)
-  - Change function names to *message()* and *wakereason()*
-  - Add version number
+    - Change table name to *bootinfo* (lowercase)
+    - Change function names to *message()* and *wakereason()*
+    - Add version number
 - 1.1.1
-  - Bug fixes
+    - Bug fixes
 - 1.1.0
-  - Support `seriallog.nut`
+    - Support `seriallog.nut`
 
 ## disconnect.nut 2.0.1 ##
 
@@ -54,30 +54,32 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 #### Public Methods ####
 
 - *start()* &mdash; Begin monitoring device connection. Parameters:
-  - *timeout* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: 10 
-  - *sendPolicy* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: *WAIT_TIL_SENT*
+    - *timeout* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: 10 
+    - *sendPolicy* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: *WAIT_TIL_SENT*
 - *stop()* &mdash; Stop monitoring device connection
 - *connect()* &mdash; Manually attempt to connect to the server
 - *disconnect()* &mdash; Manually disconnect from the server
 - *setCallback()* &mdash; Set the event callback (see above). Parameters:
-  - *callback* &mdash; A function to be called when the device's state changes. Should take the form 'function(event)', where 'event' is a table with the key 'message', whose value is a human-readable string, and 'type' is a machine readable string, eg. 'connected'. Default: `null`
+    - *callback* &mdash; A function to be called when the device's state changes. Should take the form 'function(event)', where 'event' is a table with the key 'message', whose value is a human-readable string, and 'type' is a machine readable string, eg. 'connected'. Default: `null`
 
 #### Release Notes ####
 
+- 2.1.0
+    - Add a timestamp (Squirrel *time()*) to all messages
 - 2.0.1
-  - Add reason code to back-online messaging
+    - Add reason code to back-online messaging
 - 2.0.0
-  - Add 'sendPolicy' parameter to *start()* (default: *WAIT_TIL_SENT*)
-  - Set state when *start()* called
-  - Deal with impOS <= 38 issue with ounexpecteddisconnect() being called twice when IP address lost (ie. WiFi up but router link lost)
-  - Add support for *utilities* *(see above)* to set time string correctly
+    - Add 'sendPolicy' parameter to *start()* (default: *WAIT_TIL_SENT*)
+    - Set state when *start()* called
+    - Deal with impOS <= 38 issue with ounexpecteddisconnect() being called twice when IP address lost (ie. WiFi up but router link lost)
+    - Add support for *utilities* *(see above)* to set time string correctly
 - 1.0.2
-  - Add 'timeout' parameter to *start()* (default: 10s)
-  - Add version number to file
+    - Add 'timeout' parameter to *start()* (default: 10s)
+    - Add version number to file
 - 1.0.1
-  - Change order of re-connect message: off-time then on-time
+    - Change order of re-connect message: off-time then on-time
 - 1.0.0
-  - Initial release
+    - Initial release
 
 ## seriallog.nut 2.0.2 ##
 
@@ -104,10 +106,10 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 #### Public Methods ####
 
 - *configure()* &mdash; Set up the serial link. Should always be called by host app. Parameters:
-  - *uart* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: depends on device imp type 
-  - *baudrate* &mdash; The UART speed. Integer. Default: 115200
-  - *txsize* &mdash; The size of the UART TX buffer. Integer. Default: 160 characters
-  - *enable* &mdash; Whether to enable serial logging. Boolean. Default: `true`
+    - *uart* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: depends on device imp type 
+    - *baudrate* &mdash; The UART speed. Integer. Default: 115200
+    - *txsize* &mdash; The size of the UART TX buffer. Integer. Default: 160 characters
+    - *enable* &mdash; Whether to enable serial logging. Boolean. Default: `true`
 - *enable()* &mdash; Enable serial logging
 - *disable()* &mdash; Disable serial logging
 - *log()* &mdash; Log a non-error message to serial (if enabled) and the server
@@ -116,17 +118,17 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 #### Release Notes ####
 
 - 2.0.2
-  - Fix line-splitting bug
-  - Reformat output: bracket timestamp
+    - Fix line-splitting bug
+    - Reformat output: bracket timestamp
 - 2.0.1
-  - Add support for *utilities* *(see below)* to set time string correctly
-  - Add TX buffer size setting to *configure()*
-  - Output large log messages as multiple lines
+    - Add support for *utilities* *(see below)* to set time string correctly
+    - Add TX buffer size setting to *configure()*
+    - Output large log messages as multiple lines
 - 2.0.0
-  - Convert from class to table as per other files
-  - Table is named to *seriallog* (lowercase)
-  - Add *configure()* function &mdash; if not called, serial logging is disabled
-  - Auto-select UART *configure()*, if necessary
+    - Convert from class to table as per other files
+    - Table is named to *seriallog* (lowercase)
+    - Add *configure()* function &mdash; if not called, serial logging is disabled
+    - Auto-select UART *configure()*, if necessary
 
 ## utilities.nut 2.1.1 ##
 
@@ -137,13 +139,13 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 - 2.1.1
     - Correct RFC 4412 4.4 behaviour for *uuid()*
 - 2.1.0
-  - Add *mid*, *left*, *right*, *asc*, *chr* functions for BASIC-style string manipulation
+    - Add *mid*, *left*, *right*, *asc*, *chr* functions for BASIC-style string manipulation
 - 2.0.2
-  - Add *isDST()* and *isBST()* convenience methods
-  - All *bstCheck()* and *dstCheck()* to take optional date values for checks (Default: current time and date)
+    - Add *isDST()* and *isBST()* convenience methods
+    - All *bstCheck()* and *dstCheck()* to take optional date values for checks (Default: current time and date)
 - 2.0.1
-  - Fix table naming bug
-  - Reformat table to match JSON format
-  - Add version number
+    - Fix table naming bug
+    - Reformat table to match JSON format
+    - Add version number
 - 2.0.0
-  - Change table name to *utilities* (lowercase)
+    - Change table name to *utilities* (lowercase)
