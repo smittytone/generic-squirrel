@@ -3,7 +3,7 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.1.1"
+#version "2.1.2"
 
 utilities <- {
 
@@ -252,24 +252,27 @@ utilities <- {
 
     // BASIC STRING FUNCTIONS
 
-    "mid": function(s,l,c = 0) {
+    "mid": function(s, l, c = 0) {
+        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
+        if (l > s.len()) l = s.len();
         if (l > 0) l--;
         if (l < 0) l == 0;
         if (c == 0) c = s.len() - l;
-        if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
-        return s.slice(l,l+c);
+        return s.slice(l, l + c);
     },
 
-    "left": function(s,r=0) {
-        if (r == 0) r = 1;
+    "left": function(s, r = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
-        return s.slice(0,r);
+        if (r <= 0) r = 1;
+        if (r > s.len()) r = s.len();
+        return s.slice(0, r);
     },
 
-    "right": function(s,l=0) {
-        if (l == 0) l = 1
+    "right": function(s, l = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
-        return s.slice(s.len()-l);
+        if (l <= 0) l = 1
+        if (l > s.len()) l = s.len();
+        return s.slice(s.len() - l);
     },
 
     "chr": function(v) {
