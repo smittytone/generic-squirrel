@@ -258,6 +258,7 @@ utilities <- {
         if (l > 0) l--;
         if (l < 0) l == 0;
         if (c == 0) c = s.len() - l;
+        if (l + c >= s.len()) c = s.len() - l;
         return s.slice(l, l + c);
     },
 
