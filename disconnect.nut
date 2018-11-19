@@ -104,8 +104,8 @@ disconnectionManager <- {
             } else {
                 // Send a 'still disconnected' event to the host app
                 local m = disconnectionManager._formatTimeString();
-                disconnectionManager._wakeup({"message": "Device still disconnected at" + m,
-                                            "type" : "disconnected"});
+                disconnectionManager._wakeup({"message": "Device still disconnected at " + m,
+                                              "type" : "disconnected"});
             }
 
             // Schedule an attempt to re-connect in 'reconnectDelay' seconds
@@ -170,7 +170,7 @@ disconnectionManager <- {
     "_wakeup": function(data) {
         // Queue up a message post with the supplied data
 
-        // Add a timestamp
+        // Add a message timestamp
         data.ts <- time();
 
         if (disconnectionManager.eventCallback != null) {
