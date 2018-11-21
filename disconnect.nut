@@ -77,8 +77,8 @@ disconnectionManager <- {
 
     // Private Properties **DO NOT ACCESS DIRECTLY**
     "_noIP" : false,
-    "_codes" : ["Not connected", "No network", "No IP address", "impCloud IP Nor Resolved", "impCloud unreachable",
-                "Connected to impCloud", "No proxy server", "Proxy credentials rejected"],
+    "_codes" : ["No WiFi connection", "No LAN connection", "No IP address (DHCP error)", "impCloud IP not resolved (DNS error)", 
+                "impCloud unreachable", "Connected to impCloud", "No proxy server", "Proxy credentials rejected"],
 
     // Private Methods **DO NOT CALL DIRECTLY**
     "_eventHandler" : function(reason) {
