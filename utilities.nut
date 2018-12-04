@@ -3,7 +3,7 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.1.2"
+#version "2.2.0"
 
 utilities <- {
 
@@ -50,30 +50,43 @@ utilities <- {
         return s;
     },
 
-    "toString" : function (o) {
-        switch (typeof(o)) {
+    "toString" : function (obj) {
+        jsonencode(obj, {"compact":true});   
+    },
+
+    "jsonencode" : function(obj, opts = null, ins = 0) {
+        local cp = "compact" in opts ? opts.compact : false;
+        local es = cp ? "" : " "; 
+        local sp = "";
+        if (!cp && ins > 0) {
+            for (local i = 0 ; i < ins ; i++) sp += " ";
+        }
+        // Branch on type of object being processed
+        switch (typeof obj) {
+            // The following are a containers, so iterate through them
             case "table":
-                local table = "";
-                foreach (k, v in o) {
-                    if (table != "") table += ", ";
-                    table += toString(k) + ": " + toString(v);
+                local tab = "";
+                foreach (key, val in obj) {
+                    if (tab != "") tab += "," + (!cp ? "\n " + sp : "");
+                    tab += es + jsonencode(key, opts, ins + key.len() + 7) + es + ":" + es + jsonencode(val, opts, ins + key.len() + 7);
                 }
-                return "{" + table + "}";
-            case "string":
-                return "'" + o + "'";
-            case "integer":
-                return o;
-            case "bool":
-                return o ? "true" : "false";
+                return "{" + tab + es + "}";
             case "array":
-                local array = "";
-                foreach (v in o) {
-                    if (array != "") array += ", ";
-                    array += toString(v);
+                local arr = "";
+                foreach (val in obj) {
+                    if (arr != "") arr += "," + es;
+                    arr += jsonencode(val, opts, ins + arr.len() + 2);
                 }
-                return "[" + array + "]";
+                return "[" + es + arr + es + "]";
+            // The following are not containers, so just return their value
+            case "string":
+                return "'" + obj + "'";
+            case "integer":
+                return obj.tostring();
+            case "bool":
+                return obj ? "true" : "false";
             default:
-                return typeof(o);
+                return typeof(obj);
         }
     },
 
