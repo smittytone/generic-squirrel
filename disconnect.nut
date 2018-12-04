@@ -34,7 +34,7 @@ disconnectionManager <- {
         server.setsendtimeoutpolicy(RETURN_ON_ERROR, sendPolicy, timeout);
         server.onunexpecteddisconnect(disconnectionManager._hasDisconnected);
         disconnectionManager.monitoring = true;
-        disconnectionManager._wakeup({"message": "Enabling disconnection monitoring",});
+        disconnectionManager._wakeup({"message": "Enabling disconnection monitoring"});
 
         // Check for initial connection (give it time to connect)
         disconnectionManager.connect();
