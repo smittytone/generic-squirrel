@@ -32,7 +32,7 @@ disconnectionManager <- {
         // NOTE We assume use of RETURN_ON_ERROR as DisconnectionManager is
         //      largely redundant with the SUSPEND_ON_ERROR policy
         server.setsendtimeoutpolicy(RETURN_ON_ERROR, sendPolicy, timeout);
-        server.onunexpecteddisconnect(disconnectionManager._hasDisconnected);
+        server.onunexpecteddisconnect(disconnectionManager._hasDisconnected.bindenv(this));
         disconnectionManager.monitoring = true;
         disconnectionManager._wakeup({"message": "Enabling disconnection monitoring"});
 
@@ -60,10 +60,10 @@ disconnectionManager <- {
 
     "disconnect" : function() {
         // Disconnect from the server if we're not disconnected already
+        disconnectionManager.isConnected = false;
         if (server.isconnected()) {
             server.flush(10);
             server.disconnect();
-            disconnectionManager.isConnected = false;
             disconnectionManager._wakeup({"message": "Manually disconnected from server", "type": "disconnected"});
         } else {
             disconnectionManager._wakeup({"type": "disconnected"});
