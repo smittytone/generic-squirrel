@@ -3,13 +3,16 @@
 // Licence: MIT
 
 // Code version for Squinter
-#version "2.2.0"
+#version "2.3.0"
 
 utilities <- {
 
-    // HEX CONVERSION FUNCTIONS
+    // CONVERSION FUNCTIONS
 
     "hexStringToInteger" : function(hs) {
+        // Check input string type
+        if (typeof hs != "string") throw "utilities.hexStringToInteger() requires a string";
+        hs = hs.tolower();
         if (hs.slice(0, 2) == "0x") hs = hs.slice(2);
         local i = 0;
         foreach (c in hs) {
@@ -21,6 +24,8 @@ utilities <- {
     },
 
     "hexStringToBlob" : function(hs) {
+        // Check input string type
+        if (typeof hs != "string") throw "utilities.hexStringToBlob() requires a string";
         hs = hs.tolower();
         if (hs.slice(0, 2) == "0x") hs = hs.slice(2);
         if (hs.len() % 2 != 0) hs = "0" + hs;
@@ -36,16 +41,21 @@ utilities <- {
         return r;
     },
 
-    "integerToHexString" : function (i, r = 2) {
-        if (r % 2 != 0) r++;
-        local fs = "0x%0" + r.tostring() + "x";
+    "integerToHexString" : function (i, l = 2) {
+        // Check input type
+        if (typeof i != "integer") throw "utilities.integerToHexString() requires an integer";
+        if (l % 2 != 0) l++;
+        local fs = "0x%0" + l.tostring() + "x";
         return format(fs, i);
     },
 
-    "blobToHexString" : function (b, r = 2) {
+    "blobToHexString" : function (b, l = 2) {
+        // Check input type
+        if (typeof b != "blob") throw "utilities.blobToHexString() requires a blob";
+        if (b.len() == 0) throw "utilities.blobToHexString() requires a non-zero blob";
         local s = "0x";
-        if (r % 2 != 0) r++;
-        local fs = "%0" + r.tostring() + "x";
+        if (l % 2 != 0) l++;
+        local fs = "%0" + l.tostring() + "x";
         for (local i = 0 ; i < b.len() ; i++) s += format(fs, b[i]);
         return s;
     },
@@ -88,6 +98,30 @@ utilities <- {
             default:
                 return typeof(obj);
         }
+    },
+
+    "binaryToInteger" : function(b) {
+        // Check input string ranges, type
+        if (typeof b != "string") throw "utilities.binaryToInteger() requires the binary value as a string";
+        if (b.len() > 32) throw "utilities.binaryToInteger() can only convert up to 32 bits";
+        if (b.len() == 0) return 0;
+
+        // Pad with initial zeros to the next full byte
+        if (b.len() % 8 != 0) {
+            local a = b.len();
+            while (a % 8 != 0) {
+                b = "0" + b;
+                a++;
+            }
+        }
+
+        local v = 0;
+        local a = b.len() - 1;
+        for (local i = 0 ; i < b.len() ; i++) {
+            if (b[a - i] == 49) v = v + (1 << i);
+        }
+
+        return v;
     },
 
     // RANDOM NUMBER FUNCTIONS
@@ -196,14 +230,14 @@ utilities <- {
 
         if (n.month == 2) {
             // DST starts second Sunday in March
-            for (local i = 8 ; i < 15 ; ++i) {
+            for (local i = 8 ; i < 15 ; i++) {
                 if (utilities.dayOfWeek(i, 2, n.year) == 0 && n.day >= i) return true;
             }
         }
 
         if (n.month == 10) {
             // DST ends first Sunday in November
-            for (local i = 1 ; i < 8 ; ++i) {
+            for (local i = 1 ; i < 8 ; i++) {
                 if (utilities.dayOfWeek(i, 10, n.year) == 0 && n.day <= i) return true;
             }
         }
@@ -263,7 +297,7 @@ utilities <- {
         }
     },
 
-    // BASIC STRING FUNCTIONS
+    // BASIC-STYLE STRING FUNCTIONS
 
     "mid": function(s, l, c = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
