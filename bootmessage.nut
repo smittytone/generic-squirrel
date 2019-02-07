@@ -1,15 +1,25 @@
-// Boot device information functions
-// Copyright Tony Smith, 2017-18
-// Licence: MIT
-
 // Code version for Squinter
 #version "2.2.1"
 
+/**
+ * Boot-time device information functions
+ *
+ * Code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). 
+ * Includes functions and code to trigger those functions
+ * 
+ * Author:  Tony Smith (@smittytone)
+ * Copyright Tony Smith, 2017-18
+ * Licence: MIT
+ *
+ * @table
+ */
 bootinfo <- {
-    // Public Methods
+    
+    /**
+     * Present OS version and network connection information
+     *
+     */
     "message" : function() {
-        // Present OS version and network connection information
-
         // Check for 'seriallog' in the root table - if it's there, use it
         // 'seriallog' is added as a global by including seriallog.nut in your code AHEAD of bootmessage.nut
         // NOTE 'seriallog' will always call server.log() too
@@ -42,15 +52,21 @@ bootinfo <- {
         lg.log(bootinfo._wakereason());
     },
 
+    /**
+     * Provides impOS version information in a human-readable string
+     *
+     * @returns     {string}    The impOS version number as a string
+     */
     "version" : function() {
         // Take the software version string and extract the version number
         local a = split(imp.getsoftwareversion(), "-");
         return a[2];
     },
 
-    // Private Methods **DO NOT CALL DIRECTLY**
+    // ********** Private Methods **DO NOT CALL DIRECTLY** **********
+
+    // Return the result of hardware.wakereason() as a full message string
     "_wakereason" : function() {
-        // Return the result of hardware.wakereason() as a full message string
         local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
                          "Application code updated", "Squirrel error during the last run"
                          "This device has a new impOS", "Woken by a snooze-and-retry event",

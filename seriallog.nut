@@ -1,9 +1,18 @@
-// Serial logger
-// Licence: MIT
-
 // Code version for Squinter
 #version "2.0.2"
 
+/**
+ * Serial logger
+ *
+ * Incorporates code which sends log and error messages to UART as well as to the imp API methods server.log()* 
+ * and server.error(). To use this code as-is, replace all of your application's server.log() and server.error()
+ * calls with seriallog.log() and *seriallog.error()
+ * 
+ * Author:  Tony Smith (@smittytone)
+ * Licence: MIT
+ *
+ * @table
+ */
 seriallog <- {
     // Public Properties
     "uart" : null,
@@ -11,7 +20,15 @@ seriallog <- {
     "configured": false,
     "txsize": 80,
     
-    // Public Methods
+    /**
+     * Configures the serial logger
+     *
+     * @param   {object}    uart        The imp UART object or null
+     * @param   {integer}   baudrate    The speed of the UART. Default: 115200 baud
+     * @param   {integer}   txsize      The size of the UART transmit buffer. Default: 80 bytes
+     * @param   {bool}      enable      Whether to enable the serial logger immediately. Default: true
+     *
+     */
     "configure" : function(uart = null, baudrate = 115200, txsize = 80, enable = true) {
         // Pass a UART object, eg. hardware.uart6E; your preferred baud rate; and initial state
         // NOTE UART is enabled by default and UART will be chosen for you if you pass in null
@@ -51,26 +68,46 @@ seriallog <- {
         if (typeof enable == "bool") seriallog.enabled = enable;
     },
 
+    /**
+     * Enable logging via serial
+     */
     "enable" : function() { 
         if (!seriallog.configured) seriallog.configure();
         seriallog.enabled = true;
     },
     
+    /**
+     * Disable logging via serial
+     */
     "disable" : function() { 
         seriallog.enabled = false;
     },
 
+    /**
+     * Log a message. This also (always) logs to the server
+     *
+     * @param   {string}    message     The message to be logged
+     *
+     */
     "log": function(message) {
         seriallog._logtouart(message);
         server.log(message);
     },
 
+    /**
+     * Log an error message. This also (always) logs to the server
+     *
+     * @param   {string}    message     The error message to be logged
+     *
+     */
     "error": function(message) {
         seriallog._logtouart(message);
         server.error(message);
     },
 
     // Private Methods **DO NOT CALL DIRECTLY**
+
+    // Writes the supplied text string ('message') to UART    
     "_logtouart": function(message) {
         if (seriallog.enabled) {
             if (!seriallog.configured) seriallog.configure();
@@ -92,6 +129,10 @@ seriallog <- {
         }
     },
 
+    // Returns a formatted time stamp string, either the current time or,
+    // if a value is passed into the parameter 'time', a specific time
+    // NOTE Is able to make use of the 'utilities' BST checker, if also
+    //      included in your application
     "_settimestring": function(time = null) {
         // If 'time' is supplied, it must be a table formatted as per the output of 'date()'
         local now = time != null ? time : date();
