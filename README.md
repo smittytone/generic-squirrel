@@ -31,7 +31,7 @@ Incorporates code which logs impOS and network information. It is intended to be
 - 1.1.0
     - Support `seriallog.nut`
 
-## disconnect.nut 2.1.0 ##
+## disconnect.nut 2.1.1 ##
 
 Provides *disconnectionManager*, a gloabl object which operates as a handler for imp connection states. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
 
@@ -64,13 +64,15 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 #### Release Notes ####
 
+- 2.1.1
+    - Check the argument of *start()*'s *sendPolicy* parameter is a valid value
 - 2.1.0
     - Add a timestamp (Squirrel *time()*) to all messages
     - Change mis-connection reason codes
 - 2.0.1
     - Add reason code to back-online messaging
 - 2.0.0
-    - Add 'sendPolicy' parameter to *start()* (default: *WAIT_TIL_SENT*)
+    - Add *sendPolicy* parameter to *start()* (default: *WAIT_TIL_SENT*)
     - Set state when *start()* called
     - Deal with impOS <= 38 issue with ounexpecteddisconnect() being called twice when IP address lost (ie. WiFi up but router link lost)
     - Add support for *utilities* *(see above)* to set time string correctly

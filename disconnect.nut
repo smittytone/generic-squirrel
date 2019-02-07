@@ -1,10 +1,18 @@
-// Provide disconnection functionality as a table of functions and properties
-// Copyright Tony Smith, 2018
-// Licence: MIT
-
 // Code version for Squinter
-#version "2.1.0"
+#version "2.1.1"
 
+/**
+ * Disconection/reconnection Mananger
+ *
+ * Provides disconnectionManager, a gloabl object which operates as a handler for imp connection states. 
+ * It monitors connection state and will automatically attempt to reconnect when the imp disconnects unexpectedly
+ * 
+ * Author:  Tony Smith (@smittytone)
+ * Copyright Tony Smith, 2018
+ * Licence: MIT
+ *
+ * @table
+ */
 disconnectionManager <- {
 
     // Public Properties
@@ -23,10 +31,17 @@ disconnectionManager <- {
     // NOTE 'type' may be absent for purely informational, event-less messages
     "eventCallback" : null,
 
-    // Public Methods
+    /**
+     * Begin monitoring connection state
+     *
+     * @param   {integer/float}     timeout     The max. time (in seconds) allowed for the server to acknowledge receipt of data. Default: 10s
+     * @param   {integer}           sendPolicy  The send policy: either WAIT_TIL_SENT or WAIT_FOR_ACK. Default: WAIT_TIL_SENT
+     *
+     */
     "start" : function(timeout = 10, sendPolicy = WAIT_TIL_SENT) {
         // Check parameter type, and fix if it's wrong
         if (typeof timeout != "integer" && typeof timeout != "float") timeout = 10;
+        if (sendPolicy != WAIT_TIL_SENT && sendPolicy != WAIT_FOR_ACK) sendPolicy = WAIT_TIL_SENT;
 
         // Register handlers etc.
         // NOTE We assume use of RETURN_ON_ERROR as DisconnectionManager is
@@ -40,12 +55,20 @@ disconnectionManager <- {
         disconnectionManager.connect();
     },
 
+    /**
+     * Stop monitoring connection state
+     *
+     */
     "stop" : function() {
         // De-Register handlers etc.
         disconnectionManager.monitoring = false;
         disconnectionManager._wakeup({"message": "Disabling disconnection monitoring"});
     },
 
+    /**
+     * Attempt to connect to the server. No effect if the imp is already connected
+     *
+     */
     "connect" : function() {
         // Attempt to connect to the server if we're not connected already
         // We do this to set our initial state
@@ -58,34 +81,56 @@ disconnectionManager <- {
         }
     },
 
+    /**
+     * Manually disconnect from the server
+     *
+     */
     "disconnect" : function() {
         // Disconnect from the server if we're not disconnected already
         disconnectionManager.isConnected = false;
         if (server.isconnected()) {
-            server.flush(10);
-            server.disconnect();
-            disconnectionManager._wakeup({"message": "Manually disconnected from server", "type": "disconnected"});
+            imp.onidle(function() {
+                server.flush(10);
+                server.disconnect();
+                disconnectionManager._wakeup({"message": "Manually disconnected from server", "type": "disconnected"});
+            }.bindenv(this));
         } else {
             disconnectionManager._wakeup({"type": "disconnected"});
         }
     },
 
+    /**
+     * Connection state change notification callback function
+     *
+     * @callback eventcallback
+     *
+     * @param   {string}    type        Event type: "connected", "connecting", "disconnected"
+     * @param   {string}    message     A notification message
+     *
+     */
+
+    /**
+     * Set the manager's network event callback
+     *
+     * @param   {eventcallback}     cb      A function to which connection state change notifications are sent
+     *
+     */
     "setCallback" : function(cb = null) {
         // Convenience function for setting the framework's event report callback
         if (cb != null && typeof cb == "function") disconnectionManager.eventCallback = cb;
     },
 
-    // Private Properties **DO NOT ACCESS DIRECTLY**
+    // ********** Private Properties **DO NOT ACCESS DIRECTLY** **********
     "_noIP" : false,
     "_codes" : ["No WiFi connection", "No LAN connection", "No IP address (DHCP error)", "impCloud IP not resolved (DNS error)", 
                 "impCloud unreachable", "Connected to impCloud", "No proxy server", "Proxy credentials rejected"],
 
-    // Private Methods **DO NOT CALL DIRECTLY**
+    // ********** Private Methods **DO NOT CALL DIRECTLY** **********
+    
+    // Called if the server connection is broken or re-established, initially by impOS' unexpected disconnect
+    // code and then repeatedly by server.connect(), below, as it periodically attempts to reconnect
+    // Sets 'isConnected' to true if there is NO connection
     "_eventHandler" : function(reason) {
-        // Called if the server connection is broken or re-established, initially by impOS' unexpected disconnect
-        // code and then repeatedly by server.connect(), below, as it periodically attempts to reconnect
-        // Sets 'isConnected' to true if there is NO connection
-
         // If we are not checking for unexpected disconnections, bail
         if (!disconnectionManager.monitoring) return;
 
@@ -143,20 +188,25 @@ disconnectionManager <- {
         }
     },
 
+    // This is an intercept function for 'server.onunexpecteddisconnect()'
+    // to handle the double-calling of this method's registered handler
+    // when the imp loses its link to DHCP but still has WiFi
     "_hasDisconnected" : function(reason) {
-        // This is an intercept function for 'server.onunexpecteddisconnect()'
-        // to handle the double-calling of this method's registered handler
-        // when the imp loses its link to DHCP but still has WiFi
         if (!disconnectionManager._noIP) {
             disconnectionManager._noIP = true;
             disconnectionManager._eventHandler(reason);
         }
     },
 
+    // Return the connection error/disconnection reason as a human-readable string
     "_getReason" : function(code) {
         return _codes[code];
     },
 
+    // Format a time stamp string, either the current time (default; pass null as the argument),
+    // or a specific time (pass a timestamp as the argument)
+    // NOTE Is able to make use of the 'utilities' BST checker, if also
+    //      included in your application
     "_formatTimeString" : function(n = null) {
         local bst = false;
         if ("utilities" in getroottable()) bst = utilities.isBST();
@@ -167,9 +217,8 @@ disconnectionManager <- {
         return format("%02i:%02i:%02i %s", n.hour, n.min, n.sec, z);
     },
 
+    // Queue up a message post with the supplied data
     "_wakeup": function(data) {
-        // Queue up a message post with the supplied data
-
         // Add a message timestamp
         data.ts <- time();
 
