@@ -133,12 +133,14 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
     - Add *configure()* function &mdash; if not called, serial logging is disabled
     - Auto-select UART *configure()*, if necessary
 
-## utilities.nut 2.3.0 ##
+## utilities.nut 2.4.0 ##
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
 #### Release Notes ####
 
+- 2.4.0
+    - Improve *jsonencode()*
 - 2.3.0
     - Add *binaryToInteger()* function
     - Add extra input checks to some functions

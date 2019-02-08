@@ -1,14 +1,26 @@
-// General utility functions accessed via the table 'utilities'
-// Copyright Tony Smith, 2014-18
-// Licence: MIT
-
 // Code version for Squinter
-#version "2.3.0"
+#version "2.4.0"
 
+/**
+ * General utility functions accessed via the table 'utilities'
+ *
+ * Author:  Tony Smith (@smittytone)
+ * Copyright Tony Smith, 2017-18
+ * Licence: MIT
+ *
+ * @table
+ */
 utilities <- {
 
-    // CONVERSION FUNCTIONS
+    // ********** CONVERSION FUNCTIONS **********
 
+    /**
+     * Convert a hex string (with or without '0x' prefix) to an integer
+     *
+     * @param   {string}    hs        The hex string
+     *
+     * @returns {integer}   The value of the hex string
+     */
     "hexStringToInteger" : function(hs) {
         // Check input string type
         if (typeof hs != "string") throw "utilities.hexStringToInteger() requires a string";
@@ -23,6 +35,13 @@ utilities <- {
         return i;
     },
 
+    /**
+     * Convert a hex string (with or without '0x' prefix) to a blob
+     *
+     * @param   {string}    hs        The hex string
+     *
+     * @returns {blob}      A blob in which each octext of the source is saved as a byte value
+     */
     "hexStringToBlob" : function(hs) {
         // Check input string type
         if (typeof hs != "string") throw "utilities.hexStringToBlob() requires a string";
@@ -41,6 +60,14 @@ utilities <- {
         return r;
     },
 
+    /**
+     * Convert a decimal integer into a hex string
+     *
+     * @param   {integer}   i   The integer
+     * @param   {integer}   l   The number of characters in the hex string. Default: 2
+     *
+     * @returns {string}    The hex string representation
+     */
     "integerToHexString" : function (i, l = 2) {
         // Check input type
         if (typeof i != "integer") throw "utilities.integerToHexString() requires an integer";
@@ -49,6 +76,14 @@ utilities <- {
         return format(fs, i);
     },
 
+    /**
+     * Convert a blob (array of bytes) to a hex string
+     *
+     * @param   {integer}   b   The blob
+     * @param   {integer}   l   The number of characters assigned to each byte in the hex string. Default: 2
+     *
+     * @returns {string}    The hex string representation
+     */
     "blobToHexString" : function (b, l = 2) {
         // Check input type
         if (typeof b != "blob") throw "utilities.blobToHexString() requires a blob";
@@ -96,10 +131,18 @@ utilities <- {
             case "bool":
                 return obj ? "true" : "false";
             default:
-                return typeof(obj);
+                return "'" + typeof(obj) + "'";
         }
     },
 
+    
+    /**
+     * Convert a string representation of a binary number to an integer
+     *
+     * @param   {string}    b   The binary string, eg. "001001001", up to 32 bits in length
+     *
+     * @returns {integer}   The decimal integer value of the binary representation
+     */
     "binaryToInteger" : function(b) {
         // Check input string ranges, type
         if (typeof b != "string") throw "utilities.binaryToInteger() requires the binary value as a string";
@@ -124,20 +167,41 @@ utilities <- {
         return v;
     },
 
-    // RANDOM NUMBER FUNCTIONS
+    // ********** RANDOM NUMBER FUNCTIONS **********
 
+    /**
+     * Return a random floating point number between 0.0 and m, inclusive
+     *
+     * @param   {integer}   m   The maximum value
+     *
+     * @returns {integer}   The random float
+     */
     "frnd" : function(m) {
-        // Return a pseudorandom float between 0 and max, inclusive
-        return (1.0 * math.rand() / RAND_MAX) * (m + 1);
+        return (1.0 * (m + 1.0) * math.rand() / RAND_MAX) ;
     },
 
+    /**
+     * Return a random integer between 0 and m, inclusive
+     *
+     * @param   {integer}   m   The maximum value
+     *
+     * @returns {integer}   The random integer
+     */
     "rnd" : function(m) {
-        // Return a pseudorandom integer between 0 and max, inclusive
         return utilities.frnd(m).tointeger();
     },
 
-    // NUMBER FORMAT FUNCTIONS
+    // ********** NUMBER FORMAT FUNCTIONS **********
 
+    /**
+     * Return a string representation of a number
+     *
+     * @param   {integer/float/string}  n   The number to represent
+     * @param   {integer}               d   The number of decimal places for floats
+     * @param   {string}                s   A separator character. Default: ","
+     *
+     * @returns {integer}   The random integer
+     */
     "numberFormatter" : function(n, d = null, s = ",") {
         if (d == null) {
             if (typeof n == "string") d = 0;
@@ -176,8 +240,17 @@ utilities <- {
         return nn;
     },
 
-    // CALENDAR FUNCTIONS (PUBLIC)
+    // ********** CALENDAR FUNCTIONS (PUBLIC) **********
 
+    /**
+     * Returns the day of the the week for a specific date
+     *
+     * @param   {integer}   d   The day value (1-31)
+     * @param   {integer}   m   The month value (0-11)
+     * @param   {integer}   y   The year
+     *
+     * @returns {integer}   The day of the week (0-6)
+     */
     "dayOfWeek" : function(d, m, y) {
         local dim = [
             [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
@@ -192,14 +265,27 @@ utilities <- {
         return (ad % 7) - 1;
     },
 
+/**
+     * Indicates whether a specified year was a leap year
+     *
+     * @param   {integer}   y   The year
+     *
+     * @returns {bool}      Whether the year was a leap year (true) or not (false)
+     */
     "isLeapYear" : function(y) {
         if (utilities._isLeapYear(y) == 1) return true;
         return false;
     },
 
+    /**
+     * Checks a date for British Summer Time
+     *
+     * @param   {object}    n   A date object. Default: the current date and time
+     *
+     * @returns {bool}      Whether the date is within the British Summer Time (BST) period (true), or not (false)
+     */
     "bstCheck" : function(n = null) {
-        // Checks the current date for British Summer Time,
-        // returning true or false accordingly
+        // 
         if (n == null) n = date();
         if (n.month > 2 && n.month < 9) return true;
 
@@ -219,10 +305,24 @@ utilities <- {
         return false;
     },
 
+    /**
+     * Checks a date for British Summer Time
+     *
+     * @param   {object}    n   A date object. Default: the current date and time
+     *
+     * @returns {bool}      Whether the date is within the British Summer Time (BST) period (true), or not (false)
+     */
     "isBST": function(n = null) {
         return bstCheck(n);
     },
 
+    /**
+     * Checks a date for US Daylight Savings Time
+     *
+     * @param   {object}    n   A date object. Default: the current date and time
+     *
+     * @returns {bool}      Whether the date is within the US Daylight Savings Time (DST) period (true), or not (false)
+     */
     "dstCheck" : function(n = null) {
         // Checks the current date for US Daylight Savings Time, returning true or false accordingly
         if (n == null) n = date();
@@ -245,12 +345,20 @@ utilities <- {
         return false;
     },
 
+    /**
+     * Checks a date for US Daylight Savings Time
+     *
+     * @param   {object}    n   A date object. Default: the current date and time
+     *
+     * @returns {bool}      Whether the date is within the US Daylight Savings Time (DST) period (true), or not (false)
+     */
     "isDST": function(n = null) {
         return dstCheck(n);
     },
 
-    // CALENDAR FUNCTIONS (PRIVATE)
+    // ********** CALENDAR FUNCTIONS (PRIVATE) **********
 
+    // Return the total number of leap-year days for a given year, 'y'
     "_totalLeapDays" : function(y) {
         local t = y / 4;
         if (utilities._isLeapYear(y) == 1) t = t - 1;
@@ -258,14 +366,19 @@ utilities <- {
         return t;
     },
 
+    // Is a given year, 'y', a leap year? Return 1 for yes, 0 for no
     "_isLeapYear" : function(y) {
         if ((y % 400) || ((y % 100) && !(y % 4))) return 1;
         return 0;
     },
 
-    // UUID ACCESSOR FUNCTIONS
+    // ********** UUID ACCESSOR FUNCTIONS **********
 
-    // We create this string here for later use, but only populte it if it is actually needed
+    /**
+     * Returns a valid UUID
+     *
+     * @returns {string}    The UUID
+     */
     "uuid" : function() {
         // Randomize 16 bytes (128 bits)
         local rnds = blob(16);
@@ -284,8 +397,13 @@ utilities <- {
         return s;
     },
 
-    // I2C FUNCTIONS
+    // ********** I2C FUNCTIONS **********
 
+    /**
+     * Scans an imp I2C bus for devices
+     *
+     * @param   {object}    i2c     The imp I2C bus to scan
+     */
     "debugI2C" : function(i2c) {
         if (imp.environment() == ENVIRONMENT_AGENT) {
             server.error("utilities.debugI2C() can only be run on a device");
@@ -297,8 +415,17 @@ utilities <- {
         }
     },
 
-    // BASIC-STYLE STRING FUNCTIONS
+    // ********** BASIC-STYLE STRING FUNCTIONS **********
 
+    /**
+     * Returns a sub-string using the MID$() methodology
+     *
+     * @param   {string}    s       The source string
+     * @param   {integer}   l       The index of the first character in the sub-string
+     * @param   {integer}   c       The index of the last character in the sub-string. Default: the last character in the source
+     *
+     * @returns {string}    The sub-string
+     */
     "mid": function(s, l, c = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         if (l > s.len()) l = s.len();
@@ -309,6 +436,14 @@ utilities <- {
         return s.slice(l, l + c);
     },
 
+    /**
+     * Returns a sub-string using the LEFT$() methodology: source characters first to r
+     *
+     * @param   {string}    s       The source string
+     * @param   {integer}   r       The index of the right-most character in the sub-string. Default: the last character in the source
+     *
+     * @returns {string}    The sub-string
+     */
     "left": function(s, r = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         if (r <= 0) r = 1;
@@ -316,6 +451,14 @@ utilities <- {
         return s.slice(0, r);
     },
 
+    /**
+     * Returns a sub-string using the RIGHT$() methodology: source characters l to last
+     *
+     * @param   {string}    s       The source string
+     * @param   {integer}   l       The index of the left-most character in the sub-string. Default: the first character in the source
+     *
+     * @returns {string}    The sub-string
+     */
     "right": function(s, l = 0) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         if (l <= 0) l = 1
@@ -323,6 +466,13 @@ utilities <- {
         return s.slice(s.len() - l);
     },
 
+    /**
+     * Return a character string of the specified Ascii value
+     *
+     * @param   {integer}   v       The Ascii value, eg. 65
+     *
+     * @returns {string}    The character string, eg. "A"
+     */
     "chr": function(v) {
         if (typeof v == "float") v = v.tointeger();
         if (typeof v != "integer") throw "?TYPE MISMATCH ERROR";
@@ -330,12 +480,26 @@ utilities <- {
         return format("%c",v);
     },
 
+    /**
+     * Return the Ascii value of a given character string
+     *
+     * @param   {string}    s       The character string, eg. "A"
+     *
+     * @returns {integer}   The Ascii value, eg. 65
+     */
     "asc": function(s) {
         if (typeof s != "string") throw "?TYPE MISMATCH ERROR";
         if (s.len() < 1) throw "?ILLEGAL QUANTITY ERROR";
         return s[0];
     },
 
+    /**
+     * Indicates the sign of a signed integer or float
+     *
+     * @param   {integer/float}     v   The number
+     *
+     * @returns {integer}   -1 if the number is negative, 1 if the number is positive, or 0
+     */
     "sign": function(v) {
         if (v < 0) return -1;
         if (v > 0) return 1;
