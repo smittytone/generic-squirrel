@@ -66,6 +66,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 - 2.1.1
     - Check the argument of *start()*'s *sendPolicy* parameter is a valid value
+    - Make sure we call server.disconnect() when the imp is idle
 - 2.1.0
     - Add a timestamp (Squirrel *time()*) to all messages
     - Change mis-connection reason codes
@@ -84,7 +85,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 - 1.0.0
     - Initial release
 
-## seriallog.nut 2.0.2 ##
+## seriallog.nut 2.0.3 ##
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
@@ -120,6 +121,8 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
  
 #### Release Notes ####
 
+- 2.0.3
+    - Rename a private function for cross-library consistency
 - 2.0.2
     - Fix line-splitting bug
     - Reformat output: bracket timestamp
@@ -133,14 +136,48 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
     - Add *configure()* function &mdash; if not called, serial logging is disabled
     - Auto-select UART *configure()*, if necessary
 
-## utilities.nut 2.4.0 ##
+## utilities.nut 3.0.0 ##
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
+#### Public Methods ####
+
+- Conversion Functions
+    - *hexStringToInteger()*
+    - *hexStringToBlob()*
+    - *integerToHexString()*
+    - *blobToHexString()*
+    - *binaryToInteger()*
+    - *jsonencode()*
+- Random Number and Numerical Functions
+    - *frnd()*
+    - *rnd()*
+    - *sign()*
+    - *numberFormatter()*
+- Calendar Functions
+    - *dayOfWeek()*
+    - *isLeapYear()*
+    - *isBST()*
+    - *isDST()*
+    - *uuid()*
+- I2C Functions
+    - *debugI2C()*
+- BASIC-style String Functions
+    - *mid()*
+    - *left()*
+    - *right()*
+    - *chr()*
+    - *asc()*
+
 #### Release Notes ####
 
-- 2.4.0
-    - Improve *jsonencode()*
+- 3.0.0
+    - *numberFormatter()* now throws on invalid input **breaking change**
+    - *debugI2C()* now throws on error **breaking change**
+    - Improve *jsonencode()*:
+        - Valid JSON output for non-serializable entities: function, instance, class, blobs
+        - Add *unsafe* option (Boolean value, default `true`) to catch [unsafe strings](https://developer.electricimp.com/resources/serialisablesquirrel)
+    - Fix *dayOfWeek()*
 - 2.3.0
     - Add *binaryToInteger()* function
     - Add extra input checks to some functions
