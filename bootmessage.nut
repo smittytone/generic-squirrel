@@ -7,11 +7,13 @@
  * Code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). 
  * Includes functions and code to trigger those functions
  * 
- * Author:  Tony Smith (@smittytone)
- * Copyright Tony Smith, 2017-18
- * Licence: MIT
+ * @author    Tony Smith (@smittytone)
+ * @copyright Tony Smith, 2017-18
+ * @licence   MIT
+ * @version   2.2.1
  *
  * @table
+ *
  */
 bootinfo <- {
     
@@ -55,7 +57,7 @@ bootinfo <- {
     /**
      * Provides impOS version information in a human-readable string
      *
-     * @returns     {string}    The impOS version number as a string
+     * @returns {string} The impOS version number as a string
      */
     "version" : function() {
         // Take the software version string and extract the version number
@@ -63,9 +65,15 @@ bootinfo <- {
         return a[2];
     },
 
-    // ********** Private Methods **DO NOT CALL DIRECTLY** **********
+    // ********** Private Methods DO NOT CALL DIRECTLY **********
 
-    // Return the result of hardware.wakereason() as a full message string
+    /**
+     * Return the result of hardware.wakereason() as a full message string
+     *
+     * @private
+     *
+     * @returns {string} The message string
+     */
     "_wakereason" : function() {
         local causes = [ "Cold boot", "Woken after sleep", "Software reset", "Wakeup pin triggered",
                          "Application code updated", "Squirrel error during the last run"
