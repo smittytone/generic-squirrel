@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "2.0.2"
+#version "2.0.3"
 
 /**
  * Serial logger
@@ -8,10 +8,12 @@
  * and server.error(). To use this code as-is, replace all of your application's server.log() and server.error()
  * calls with seriallog.log() and *seriallog.error()
  * 
- * Author:  Tony Smith (@smittytone)
- * Licence: MIT
+ * @Author  Tony Smith (@smittytone)
+ * @licence MIT
+ * @version 2.0.3
  *
  * @table
+ *
  */
 seriallog <- {
     // Public Properties
@@ -23,10 +25,10 @@ seriallog <- {
     /**
      * Configures the serial logger
      *
-     * @param   {object}    uart        The imp UART object or null
-     * @param   {integer}   baudrate    The speed of the UART. Default: 115200 baud
-     * @param   {integer}   txsize      The size of the UART transmit buffer. Default: 80 bytes
-     * @param   {bool}      enable      Whether to enable the serial logger immediately. Default: true
+     * @param {imp::uart} [uart]     - The imp UART object. Default: imp-specific UART (see code)
+     * @param {integer}   [baudrate] - The speed of the UART in bits per second. Default: 115200
+     * @param {integer}   [txsize]   - The size of the UART transmit buffer in bytes. Default: 80
+     * @param {bool}      [enable]   - Whether to enable the serial logger immediately. Default: true
      *
      */
     "configure" : function(uart = null, baudrate = 115200, txsize = 80, enable = true) {
@@ -70,6 +72,7 @@ seriallog <- {
 
     /**
      * Enable logging via serial
+     *
      */
     "enable" : function() { 
         if (!seriallog.configured) seriallog.configure();
@@ -78,6 +81,7 @@ seriallog <- {
     
     /**
      * Disable logging via serial
+     *
      */
     "disable" : function() { 
         seriallog.enabled = false;
@@ -86,7 +90,7 @@ seriallog <- {
     /**
      * Log a message. This also (always) logs to the server
      *
-     * @param   {string}    message     The message to be logged
+     * @param  {string} message - The message to be logged
      *
      */
     "log": function(message) {
@@ -97,7 +101,7 @@ seriallog <- {
     /**
      * Log an error message. This also (always) logs to the server
      *
-     * @param   {string}    message     The error message to be logged
+     * @param {string} message - The error message to be logged
      *
      */
     "error": function(message) {
@@ -105,13 +109,20 @@ seriallog <- {
         server.error(message);
     },
 
-    // Private Methods **DO NOT CALL DIRECTLY**
-
-    // Writes the supplied text string ('message') to UART    
+    // ********** Private Methods DO NOT CALL DIRECTLY **********
+    
+    /**
+     * Writes the supplied text string ('message') to UART
+     *
+     * @private
+     *
+     * @param {string} message - The error message to be logged
+     *
+     */
     "_logtouart": function(message) {
         if (seriallog.enabled) {
             if (!seriallog.configured) seriallog.configure();
-            local s = "[IMP LOG] (" + seriallog._settimestring() + ") " + message;
+            local s = "[IMP LOG] (" + seriallog._formatTimeString() + ") " + message;
             
             // Break the message into lines of 'txsize' characters (last may be less)
             local done = false;
@@ -129,18 +140,25 @@ seriallog <- {
         }
     },
 
-    // Returns a formatted time stamp string, either the current time or,
-    // if a value is passed into the parameter 'time', a specific time
-    // NOTE Is able to make use of the 'utilities' BST checker, if also
-    //      included in your application
-    "_settimestring": function(time = null) {
-        // If 'time' is supplied, it must be a table formatted as per the output of 'date()'
-        local now = time != null ? time : date();
+    /**
+     * Format a timestamp string, either the current time (default; pass null as the argument), 
+     * or a specific time (pass a timestamp as the argument). Includes the timezone
+     * NOTE It is able to make use of the 'utilities' BST checker, if also included in your application
+     * 
+     * @private
+     *
+     * @param {table} [n] - A Squirrel date/time description table (see date()). Default: current date
+     *
+     * @returns {string} The timestamp string, eg. "2019-01-31 12:45:0 +1:00"
+     *
+     */
+    "_formatTimeString": function(time = null) {
         local bst = false;
         if ("utilities" in getroottable()) bst = utilities.isBST();
-        now.hour += (bst ? 1 : 0);
-        if (now.hour > 23) now.hour -= 24;
+        if (time == null) time = date();
+        time.hour += (bst ? 1 : 0);
+        if (time.hour > 23) time.hour -= 24;
         local z = bst ? "+01:00" : "UTC";
-        return format("%04d-%02d-%02d %02d:%02d:%02d %s", now.year, now.month + 1, now.day, now.hour, now.min, now.sec, z);
+        return format("%04d-%02d-%02d %02d:%02d:%02d %s", time.year, time.month + 1, time.day, time.hour, time.min, time.sec, z);
     }
 }
