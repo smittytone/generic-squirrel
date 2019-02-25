@@ -4,7 +4,18 @@ Squirrel code used in multiple projects. The `.nut` files kept here can be cut a
 
 **Note** Updates are made regularly to the `develop` branch, which is merged into `master` on a (roughly) monthly basis.
 
-## bootmessage.nut 2.2.1 ##
+## File List ##
+
+- [bootmessage.nut](#bootmessagenut)
+- [disconnect.nut](#disconnectnut)
+- [seriallog.nut](#seriallognut)
+- [utilities.nut](#utilitiesnut)
+- [simpleslack.nut](#simpleslacknut)
+- [crashreporter.nut](#crashreporternut)
+
+## bootmessage.nut ##
+
+#### Version 2.2.1 ####
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Compatible with **seriallog.nut**.
 
@@ -31,7 +42,9 @@ Incorporates code which logs impOS and network information. It is intended to be
 - 1.1.0
     - Support `seriallog.nut`
 
-## disconnect.nut 2.1.1 ##
+## disconnect.nut ##
+
+#### Version 2.1.1 ####
 
 Provides *disconnectionManager*, a gloabl object which operates as a handler for imp connection states. Call *disconnectionManager.start()* to begin monitoring and to allow the imp automatically to attempt to reconnect when it disconnects unexpectedly. *disconnectionManager.connect()* and *disconnectionManager.disconnect()* can then be used to, respectively, connect to and disconnect from the server, and should be used in place of the imp API methods *server.connect()* and *server.disconnect()*.
 
@@ -85,7 +98,9 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 - 1.0.0
     - Initial release
 
-## seriallog.nut 2.0.3 ##
+## seriallog.nut ##
+
+#### Version 2.0.3 ####
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
@@ -136,7 +151,9 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
     - Add *configure()* function &mdash; if not called, serial logging is disabled
     - Auto-select UART *configure()*, if necessary
 
-## utilities.nut 3.0.0 ##
+## utilities.nut ##
+
+#### Version 3.0.0 ####
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
@@ -198,3 +215,50 @@ A table of utility routines, accessed through the global object *utilities*. Ple
     - Add version number
 - 2.0.0
     - Change table name to *utilities* (lowercase)
+
+## simpleslack.nut ##
+
+#### Version 1.0.0 ####
+
+A very basic class for posting messages to Slack via the Incoming Webhook mechanism. Requires a Slack account able to create Incoming Webhooks. The constructor takes the new Incoming Webhook **path**, as provided by Slack, as a string.
+
+#### Example ####
+
+```squirrel
+local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
+```
+
+#### Public Methods ####
+
+- *post()* &mdash; Takes the message string to be posted
+
+#### Release Notes ####
+
+- 1.0.0
+    - Initial release
+
+## crashreporter.nut ##
+
+#### Version 1.0.0 ####
+
+A generic error reporter, implemented as a Squirrel table called *crashReporter*. Call the *init()* function and pass in a reference to a messenger function such as the SimpleSlack class’ *post()* method, described above. You can provide any messenger function you like, but it **must** take a single message string.
+
+#### Example ####
+
+```squirrel
+local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
+crashReporter.init(slack.post.bindenv(slack));
+```
+
+#### Public Methods ####
+
+- *init()* &mdash; Takes the messenger object
+- *report()* &mdash; Used internally to relay the error report via the messenger
+- *timestamp()* &mdash; Returns the current date as a formatted string
+
+#### Release Notes ####
+
+- 1.0.0
+    - Initial release
+
+[Back to Top](#top)
