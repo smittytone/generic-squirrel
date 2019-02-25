@@ -198,3 +198,44 @@ A table of utility routines, accessed through the global object *utilities*. Ple
     - Add version number
 - 2.0.0
     - Change table name to *utilities* (lowercase)
+
+## simpleslack.nut 1.0.0 ##
+
+A very basic class for posting messages to Slack via the Incoming Webhook mechanism. Requires a Slack account able to create Incoming Webhooks. The constructor takes the new Incoming Webhook **path**, as provided by Slack, as a string.
+
+#### Example ####
+
+```squirrel
+local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
+```
+
+#### Public Methods ####
+
+- *post()* &mdash; Takes the message string to be posted
+
+#### Release Notes ####
+
+- 1.0.0
+    - Initial release
+
+## crashreporter.nut 1.0.0 ##
+
+A generic error reporter, implemented as a Squirrel table called *crashReporter*. Call the *init()* function and pass in a reference to a messenger function such as the SimpleSlack class’ *post()* method, described above. You can provide any messenger function you like, but it **must** take a single message string.
+
+#### Example ####
+
+```squirrel
+local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
+crashReporter.init(slack.post.bindenv(slack));
+```
+
+#### Public Methods ####
+
+- *init()* &mdash; Takes the messenger object
+- *report()* &mdash; Used internally to relay the error report via the messenger
+- *timestamp()* &mdash; Returns the current date as a formatted string
+
+#### Release Notes ####
+
+- 1.0.0
+    - Initial release
