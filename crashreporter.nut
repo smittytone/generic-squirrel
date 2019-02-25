@@ -14,7 +14,7 @@
 crashReporter <- {
 
     /**
-     * Reference to the object handling notification messaging
+     * Reference to a function responsible for sending notifications
      *
      * @property
      *
@@ -35,23 +35,24 @@ crashReporter <- {
         report = report + "*GROUP* " + __EI.DEVICEGROUP_NAME;
         
         // Send the report text via the chosen messenger object
-        crashReporter.messenger.post(report);
+        crashReporter.messenger(report);
     },
 
     /**
      * Initilize the service
      *
-     * @param {instance} messengerInstance - The error messenger instance (agent only)
+     * @param {function} messengerFunction - The function to send error messages (agent only)
      *
      */
-    "init" : function(messengerInstance = null) {
+    "init" : function(messengerFunction = null) {
         // Register the agent's device message handler on the agent
         local isAgent = (imp.environment() == 2);
         
         // Set up the agenrt and check the messenger object
         if (isAgent) {
-            if (messengerInstance == null) throw("crashReporter.init() requires an instance of a messenger object");
-            crashReporter.messenger = messengerInstance;
+            if (messengerFunction == null || typeof messengerFunction != "function") 
+                throw("crashReporter.init() requires a messenger function");
+            crashReporter.messenger = messengerFunction;
             device.on("crash.reporter.relay.debug.error", crashReporter.report);
         }
         
