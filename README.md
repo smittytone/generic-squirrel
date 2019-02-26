@@ -261,4 +261,4 @@ crashReporter.init(slack.post.bindenv(slack));
 - 1.0.0
     - Initial release
 
-[Back to Top](#top)
+[Back to Top](#generic-squirrel)
