@@ -32,7 +32,8 @@ crashReporter <- {
         local report = "*ERROR REPORT*\n*TIME* " + crashReporter.timestamp() + "\n";
         report = report + "*ERROR* " + error + "\n";
         report = report + "*DEVICE* " + imp.configparams.deviceid + "\n";
-        report = report + "*GROUP* " + __EI.DEVICEGROUP_NAME;
+        report = report + "*GROUP* " + __EI.DEVICEGROUP_NAME + "\n";
+        report = report + "*PRODUCT* " + __EI.PRODUCT_NAME;
         
         // Send the report text via the chosen messenger object
         crashReporter.messenger(report);
