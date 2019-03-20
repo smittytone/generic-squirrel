@@ -42,6 +42,8 @@ Incorporates code which logs impOS and network information. It is intended to be
 - 1.1.0
     - Support `seriallog.nut`
 
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
+
 ## disconnect.nut ##
 
 #### Version 2.1.1 ####
@@ -98,6 +100,8 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 - 1.0.0
     - Initial release
 
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
+
 ## seriallog.nut ##
 
 #### Version 2.0.3 ####
@@ -150,6 +154,8 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
     - Table is named to *seriallog* (lowercase)
     - Add *configure()* function &mdash; if not called, serial logging is disabled
     - Auto-select UART *configure()*, if necessary
+
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
 
 ## utilities.nut ##
 
@@ -219,6 +225,8 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 - 2.0.0
     - Change table name to *utilities* (lowercase)
 
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
+
 ## simpleslack.nut ##
 
 #### Version 1.0.0 ####
@@ -239,6 +247,8 @@ local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
 
 - 1.0.0
     - Initial release
+
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></p>
 
 ## crashreporter.nut ##
 
@@ -264,4 +274,4 @@ crashReporter.init(slack.post.bindenv(slack));
 - 1.0.0
     - Initial release
 
-[Back to Top](#generic-squirrel)
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
