@@ -1,13 +1,13 @@
 // Code version for Squinter
-#version "3.0.0"
+#version "3.1.0"
 
 /**
- * General utility functions accessed via the table 'utilities'
+ * General utility functions accessed via the table 'utilities'.
  *
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2017-19
  * @licence   MIT
- * @version   3.0.0
+ * @version   3.1.0
  *
  * @table
  *
@@ -17,7 +17,7 @@ utilities <- {
     // ********** Conversion Functions **********
 
     /**
-     * Convert a hex string (with or without '0x' prefix) to an integer
+     * Convert a hex string (with or without '0x' prefix) to an integer.
      *
      * @param {string} hs - The hex string
      *
@@ -39,7 +39,7 @@ utilities <- {
     },
 
     /**
-     * Convert a hex string (with or without '0x' prefix) to a blob
+     * Convert a hex string (with or without '0x' prefix) to a blob.
      *
      * @param {string} hs - The hex string
      *
@@ -65,7 +65,7 @@ utilities <- {
     },
 
     /**
-     * Convert a decimal integer into a hex string
+     * Convert a decimal integer into a hex string.
      *
      * @param {integer} i   - The integer
      * @param {integer} [l] - The number of characters in the hex string. Default: 2
@@ -81,7 +81,7 @@ utilities <- {
     },
 
     /**
-     * Convert a blob (array of bytes) to a hex string
+     * Convert a blob (array of bytes) to a hex string.
      *
      * @param {integer} b   - The blob
      * @param {integer} [l] - The number of characters assigned to each byte in the hex string. Default: 2
@@ -101,7 +101,7 @@ utilities <- {
     },
 
     /**
-     * Convert a string representation of a binary number to an integer
+     * Convert a string representation of a binary number to an integer.
      *
      * @param {string} b - The binary string, eg. "001001001", up to 32 bits in length
      *
@@ -137,7 +137,7 @@ utilities <- {
     },
 
     /**
-     * Convert anything into a JSON representation
+     * Convert anything into a JSON representation.
      *
      * @param {*}       o   - The integer/float/string/blob/bool
      * @param {table}   [s] - Table of encoding settings: { "compact" : <true/false>, "unsafe" : <true/false> }
@@ -186,10 +186,30 @@ utilities <- {
         }
     },
 
+    /**
+     * Create a print-suitable string from a blob.
+     *
+     * @param {integer} ab - The blob
+     *
+     * @returns {string} The string representation
+     *
+     */
+    "printblob" : function(ab) {
+        local op = "";
+        foreach (by in ab) {
+            if (by < 32 || by > 127) {
+                op += ("[" + format("%02X", by) + "]");
+            } else {
+                op += by.tochar();
+            }
+        }
+        return op;
+    },
+
     // ********** Random Number and Numerical Functions **********
 
     /**
-     * Return a random floating point number between 0.0 and m, inclusive
+     * Return a random floating point number between 0.0 and m, inclusive.
      *
      * @param {integer} m The maximum value
      *
@@ -201,7 +221,7 @@ utilities <- {
     },
 
     /**
-     * Return a random integer between 0 and m, inclusive
+     * Return a random integer between 0 and m, inclusive.
      *
      * @param {integer} m The maximum value
      *
@@ -213,7 +233,7 @@ utilities <- {
     },
 
     /**
-     * Indicates the sign of a signed integer or float
+     * Indicates the sign of a signed integer or float.
      *
      * @param {integer|float} v - The number
      *
@@ -229,7 +249,7 @@ utilities <- {
     
     /**
      * Return a string representation of a number with the specified decimal places (irrespective of type)
-     * and the desired hundreds separator (or none if you pass an empty string)
+     * and the desired hundreds separator (or none if you pass an empty string).
      *
      * @param {integer|float|string} n   - The number to represent
      * @param {integer}              [d] - The number of decimal places for floats. Default: 2 for float; 0 for other types
@@ -278,7 +298,7 @@ utilities <- {
     // ********** Calendar Functions **********
 
     /**
-     * Returns the day of the the week for a specific date
+     * Returns the day of the the week for a specific date.
      *
      * @param {integer} d - The day value (1-31)
      * @param {integer} m - The month value (1-12)
@@ -301,7 +321,7 @@ utilities <- {
     },
 
 /**
-     * Indicates whether a specified year was a leap year
+     * Indicates whether a specified year was a leap year.
      *
      * @param {integer} y - The four-digit year (eg. 2019)
      *
@@ -314,7 +334,7 @@ utilities <- {
     },
 
     /**
-     * Checks a date for British Summer Time
+     * Checks a date for British Summer Time.
      *
      * @param {table} [n] - A Squirrel date table (see date()). Default: the current date and time
      *
@@ -347,7 +367,7 @@ utilities <- {
     },
 
     /**
-     * Checks a date for US Daylight Savings Time
+     * Checks a date for US Daylight Savings Time.
      *
      * @param {table} [n] - A Squirrel date table (see date()). Default: the current date and time
      *
@@ -383,7 +403,7 @@ utilities <- {
     // ********** UUID ACCESSOR FUNCTIONS **********
 
     /**
-     * Returns a valid UUID
+     * Returns a valid UUID.
      *
      * @returns {string} The UUID
      *
@@ -409,7 +429,7 @@ utilities <- {
     // ********** I2C Functions **********
 
     /**
-     * Scans an imp I2C bus for devices
+     * Scans an imp I2C bus for devices.
      *
      * @param {imp::i2c} i2c - The imp I2C bus to scan
      *
@@ -425,7 +445,7 @@ utilities <- {
     // ********** BASIC-style String Functions **********
 
     /**
-     * Returns a sub-string using the MID$() methodology
+     * Returns a sub-string using the MID$() methodology.
      *
      * @param {string}  s   - The source string
      * @param {integer} l   - The index of the first character in the sub-string
@@ -447,7 +467,7 @@ utilities <- {
     },
 
     /**
-     * Returns a sub-string using the LEFT$() methodology: source characters first to r
+     * Returns a sub-string using the LEFT$() methodology: source characters first to r.
      *
      * @param {string}  s   - The source string
      * @param {integer} [r] - The index of the right-most character in the sub-string. Default: the last character in the source
@@ -464,7 +484,7 @@ utilities <- {
     },
 
     /**
-     * Returns a sub-string using the RIGHT$() methodology: source characters l to last
+     * Returns a sub-string using the RIGHT$() methodology: source characters l to last.
      *
      * @param {string}  s   - The source string
      * @param {integer} [l] - The index of the left-most character in the sub-string. Default: the first character in the source
@@ -481,7 +501,7 @@ utilities <- {
     },
 
     /**
-     * Return a character string of the specified Ascii value
+     * Return a character string of the specified Ascii value.
      *
      * @param {integer} v - The Ascii value, eg. 65
      *
@@ -496,7 +516,7 @@ utilities <- {
     },
 
     /**
-     * Return the Ascii value of a given character string
+     * Return the Ascii value of a given character string.
      *
      * @param {string} s - The character string, eg. "A"
      *

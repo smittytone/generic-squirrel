@@ -153,7 +153,7 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 
 ## utilities.nut ##
 
-#### Version 3.0.0 ####
+#### Version 3.1.0 ####
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
@@ -166,6 +166,7 @@ A table of utility routines, accessed through the global object *utilities*. Ple
     - *blobToHexString()*
     - *binaryToInteger()*
     - *jsonencode()*
+    - *printblob()*
 - Random Number and Numerical Functions
     - *frnd()*
     - *rnd()*
@@ -188,6 +189,8 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 
 #### Release Notes ####
 
+- 3.1.0
+    - Add *printblob()* function
 - 3.0.0
     - *numberFormatter()* now throws on invalid input **breaking change**
     - *debugI2C()* now throws on error **breaking change**
