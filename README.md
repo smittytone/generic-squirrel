@@ -69,7 +69,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 #### Public Methods ####
 
 - *start()* &mdash; Begin monitoring device connection. Parameters:
-    - *timeout* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: 10 
+    - *timeout* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: 10
     - *sendPolicy* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: *WAIT_TIL_SENT*
 - *stop()* &mdash; Stop monitoring device connection
 - *connect()* &mdash; Manually attempt to connect to the server
@@ -129,7 +129,7 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 #### Public Methods ####
 
 - *configure()* &mdash; Set up the serial link. Should always be called by host app. Parameters:
-    - *uart* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: depends on device imp type 
+    - *uart* &mdash; See imp API's **server.setsendtimeoutpolicy()**. Integer. Default: depends on device imp type
     - *baudrate* &mdash; The UART speed. Integer. Default: 115200
     - *txsize* &mdash; The size of the UART TX buffer. Integer. Default: 160 characters
     - *enable* &mdash; Whether to enable serial logging. Boolean. Default: `true`
@@ -137,7 +137,7 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 - *disable()* &mdash; Disable serial logging
 - *log()* &mdash; Log a non-error message to serial (if enabled) and the server
 - *error()* &mdash; Log an error message to serial (if enabled) and the server
- 
+
 #### Release Notes ####
 
 - 2.0.3
@@ -252,7 +252,7 @@ local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
 
 ## crashreporter.nut ##
 
-#### Version 1.0.0 ####
+#### Version 1.0.1 ####
 
 A generic error reporter, implemented as a Squirrel table called *crashReporter*. Call the *init()* function and pass in a reference to a messenger function such as the SimpleSlack class’ *post()* method, described above. You can provide any messenger function you like, but it **must** take a single message string.
 
@@ -271,6 +271,8 @@ crashReporter.init(slack.post.bindenv(slack));
 
 #### Release Notes ####
 
+- 1.0.1
+    - Minor code changes
 - 1.0.0
     - Initial release
 
