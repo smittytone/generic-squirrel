@@ -1,16 +1,16 @@
 // Code version for Squinter
-#version "2.0.3"
+#version "2.1.0"
 
 /**
  * Serial logger
  *
- * Incorporates code which sends log and error messages to UART as well as to the imp API methods server.log()* 
+ * Incorporates code which sends log and error messages to UART as well as to the imp API methods server.log()*
  * and server.error(). To use this code as-is, replace all of your application's server.log() and server.error()
  * calls with seriallog.log() and *seriallog.error()
- * 
+ *
  * @Author  Tony Smith (@smittytone)
  * @licence MIT
- * @version 2.0.3
+ * @version 2.1.0
  *
  * @table
  *
@@ -20,8 +20,8 @@ seriallog <- {
     "uart" : null,
     "enabled" : false,
     "configured": false,
-    "txsize": 80,
-    
+    "txsize": 120,
+
     /**
      * Configures the serial logger
      *
@@ -31,7 +31,7 @@ seriallog <- {
      * @param {bool}      [enable]   - Whether to enable the serial logger immediately. Default: true
      *
      */
-    "configure" : function(uart = null, baudrate = 115200, txsize = 80, enable = true) {
+    "configure" : function(uart = null, baudrate = 115200, txsize = 120, enable = true) {
         // Pass a UART object, eg. hardware.uart6E; your preferred baud rate; and initial state
         // NOTE UART is enabled by default and UART will be chosen for you if you pass in null
         //      If you don't call configure, serial logging is disabled by default but
@@ -56,6 +56,9 @@ seriallog <- {
               case "imp005":
                 uart = hardware.uart0;
                 u = "0";
+              case "impC001":
+                uart = hardware.uartNU;
+                u = "NU";
             }
             server.log("Read the serial log via hardware.uart" + u);
         } else {
@@ -65,7 +68,8 @@ seriallog <- {
         if (typeof txsize != "integer" || txsize < 80) txsize = 80;
         seriallog.txsize = txsize;
         seriallog.uart.settxfifosize(txsize);
-        seriallog.uart.configure(baudrate, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
+        local speed = seriallog.uart.configure(baudrate, 8, PARITY_NONE, 1, NO_RX | NO_CTSRTS);
+        server.log("UART speed: " + speed);
         seriallog.configured = true;
         if (typeof enable == "bool") seriallog.enabled = enable;
     },
@@ -74,16 +78,16 @@ seriallog <- {
      * Enable logging via serial
      *
      */
-    "enable" : function() { 
+    "enable" : function() {
         if (!seriallog.configured) seriallog.configure();
         seriallog.enabled = true;
     },
-    
+
     /**
      * Disable logging via serial
      *
      */
-    "disable" : function() { 
+    "disable" : function() {
         seriallog.enabled = false;
     },
 
@@ -110,7 +114,7 @@ seriallog <- {
     },
 
     // ********** Private Methods DO NOT CALL DIRECTLY **********
-    
+
     /**
      * Writes the supplied text string ('message') to UART
      *
@@ -123,14 +127,14 @@ seriallog <- {
         if (seriallog.enabled) {
             if (!seriallog.configured) seriallog.configure();
             local s = "[IMP LOG] (" + seriallog._formatTimeString() + ") " + message;
-            
+
             // Break the message into lines of 'txsize' characters (last may be less)
             local done = false;
             do {
                 local t = "";
                 if (s.len() > seriallog.txsize) {
                     t = s.slice(0, seriallog.txsize);
-                    s = s.slice(s.len() - seriallog.txsize);
+                    s = s.slice(seriallog.txsize, s.len());
                 } else {
                     t = s;
                     done = true;
@@ -141,10 +145,10 @@ seriallog <- {
     },
 
     /**
-     * Format a timestamp string, either the current time (default; pass null as the argument), 
+     * Format a timestamp string, either the current time (default; pass null as the argument),
      * or a specific time (pass a timestamp as the argument). Includes the timezone
      * NOTE It is able to make use of the 'utilities' BST checker, if also included in your application
-     * 
+     *
      * @private
      *
      * @param {table} [n] - A Squirrel date/time description table (see date()). Default: current date

@@ -104,7 +104,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 ## seriallog.nut ##
 
-#### Version 2.0.3 ####
+#### Version 2.1.0 ####
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
@@ -119,6 +119,7 @@ The default UART depends on the the type of imp on which the code is running:
 | imp003 | hardware.uartDM |
 | imp004m | hardware.uartHJ |
 | imp005 | hardware.uart0 |
+| impC001 | hardware.uartNU |
 
 Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.disable()*, or setting the *seriallog.enabled* property directly. This does not affect logging via the server, which will always be used, provided there is a connection to the server.
 
@@ -140,6 +141,10 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 
 #### Release Notes ####
 
+- 2.1.0
+    - Add impC001 support
+    - Log width fix; increase default frame size
+    - Log actual bus speed
 - 2.0.3
     - Rename a private function for cross-library consistency
 - 2.0.2
