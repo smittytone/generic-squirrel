@@ -255,7 +255,7 @@ local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
 - 1.0.0
     - Initial release
 
-<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></p>
+<p align="right"><a href="#generic-squirrel"><i>Back to Top</i></a></p>
 
 ## crashreporter.nut ##
 
