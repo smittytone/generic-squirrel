@@ -4,19 +4,19 @@
 /**
  * Boot-time device information functions
  *
- * Code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). 
+ * Code which logs impOS and network information. It is intended to be included early in the runtime (hence the name).
  * Includes functions and code to trigger those functions
- * 
+ *
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2017-18
  * @licence   MIT
- * @version   2.2.1
+ * @version   2.2.2
  *
  * @table
  *
  */
 bootinfo <- {
-    
+
     /**
      * Present OS version and network connection information
      *
@@ -27,7 +27,8 @@ bootinfo <- {
         // NOTE 'seriallog' will always call server.log() too
         local lg = "seriallog" in getroottable() ? seriallog : server;
         lg.log("impOS version " + bootinfo.version());
-        lg.log(format("Running \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
+        lg.log(format("Product \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
+        lg.log(format("Device Group \'%s\' (%s)", __EI.DEVICEGROUP_NAME, __EI.DEVICEGROUP_ID));
         lg.log(format("SHA %s", __EI.DEPLOYMENT_SHA));
 
         // Get current networking information
@@ -41,7 +42,7 @@ bootinfo <- {
             // Get the SSID of the network the device is connected to (or fallback to the last known network)
             if (w.type != "cell") {
                 local s = w.type == "wifi" ? ("connectedssid" in w ? w.connectedssid : ("ssid" in w ? w.ssid : "Unknown")) : "Unknown";
-                
+
                 // Get the type of network we are using (WiFi or Ethernet)
                 local t = "Connected by " + (w.type == "wifi" ? "WiFi on SSID \"" + s + "\"" : w.type);
                 lg.log(t + " with IP address " + i.ipv4.address);

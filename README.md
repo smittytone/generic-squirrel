@@ -15,7 +15,7 @@ Squirrel code used in multiple projects. The `.nut` files kept here can be cut a
 
 ## bootmessage.nut ##
 
-#### Version 2.2.1 ####
+#### Version 2.2.2 ####
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Compatible with **seriallog.nut**.
 
@@ -26,6 +26,8 @@ Incorporates code which logs impOS and network information. It is intended to be
 
 #### Release Notes #####
 
+- 2.2.2
+    - Add device group information
 - 2.2.1
     - Remove imp type (imp003) from reset button wake reason
 - 2.2.0
