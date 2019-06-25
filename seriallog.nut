@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "2.1.0"
+#version "2.2.0"
 
 /**
  * Serial logger
@@ -165,4 +165,12 @@ seriallog <- {
         local z = bst ? "+01:00" : "UTC";
         return format("%04d-%02d-%02d %02d:%02d:%02d %s", time.year, time.month + 1, time.day, time.hour, time.min, time.sec, z);
     }
+}
+
+log <- function(msg) {
+    seriallog.log(msg);
+}
+
+err <- function(msg) {
+    seriallog.error(msg);
 }
