@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "2.2.1"
+#version "2.2.2"
 
 /**
  * Boot-time device information functions
