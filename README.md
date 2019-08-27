@@ -252,6 +252,8 @@ local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
 
 #### Release Notes ####
 
+- 1.0.1
+    - Correct name of class in error messages
 - 1.0.0
     - Initial release
 
