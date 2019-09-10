@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "3.1.0"
+#version "3.1.1"
 
 /**
  * General utility functions accessed via the table 'utilities'.
@@ -7,7 +7,7 @@
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2017-19
  * @licence   MIT
- * @version   3.1.0
+ * @version   3.1.1
  *
  * @table
  *
@@ -95,6 +95,7 @@ utilities <- {
         if (b.len() == 0) throw "utilities.blobToHexString() requires a non-zero blob";
         local s = "0x";
         if (l % 2 != 0) l++;
+        if (l < 2) l = 2;
         local fs = "%0" + l.tostring() + "x";
         for (local i = 0 ; i < b.len() ; i++) s += format(fs, b[i]);
         return s;
@@ -126,14 +127,14 @@ utilities <- {
         local v = 0;
         local a = b.len() - 1;
         for (local i = 0 ; i < b.len() ; i++) {
-            if (b[a - i] == 49) v = v + (1 << i);
+            if (b[a - i] == 49) v += (1 << i)
         }
 
         return v;
     },
 
     "toString" : function (o) {
-        jsonencode(o, {"compact":true});   
+        jsonencode(o, {"compact":true});
     },
 
     /**
@@ -149,7 +150,7 @@ utilities <- {
     "jsonencode" : function(o, s = null, i = 0) {
         local c = "compact" in s ? s.compact : false;
         local u = "unsafe" in s ? s.unsafe : true;
-        local e = c ? "" : " "; 
+        local e = c ? "" : " ";
         local p = "";
         if (!c && i > 0) {
             for (local j = 0 ; j < i ; j++) p += " ";
@@ -246,7 +247,7 @@ utilities <- {
         if (v > 0) return 1;
         return 0;
     },
-    
+
     /**
      * Return a string representation of a number with the specified decimal places (irrespective of type)
      * and the desired hundreds separator (or none if you pass an empty string).
@@ -309,14 +310,14 @@ utilities <- {
      */
     "dayOfWeek" : function(d, m, y) {
         // Use Zeller's Rule (see http://mathforum.org/dr.math/faq/faq.calendar.html)
-        m = m - 2;
-        if (m < 1) m = m + 12;
+        m -= 2;
+        if (m < 1) m += 12;
         local e = y.tostring().slice(2).tointeger();
         local s = y.tostring().slice(0,2).tointeger();
         local t = m > 10 ? e - 1 : e;
         local f = d + ((13 * m - 1) / 5) + t + (t / 4) + (s / 4) - (2 * s);
         f = f % 7;
-        if (f < 0) f = f + 7;
+        if (f < 0) f += 7;
         return f;
     },
 
@@ -346,7 +347,7 @@ utilities <- {
     },
 
     "bstCheck" : function(n = null) {
-        // 
+        //
         if (n == null) n = date();
         if (n.month > 2 && n.month < 9) return true;
 
@@ -377,7 +378,7 @@ utilities <- {
     "isDST": function(n = null) {
         return dstCheck(n);
     },
-    
+
     "dstCheck" : function(n = null) {
         // Checks the current date for US Daylight Savings Time, returning true or false accordingly
         if (n == null) n = date();
