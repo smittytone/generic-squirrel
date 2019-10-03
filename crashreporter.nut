@@ -1,6 +1,6 @@
 // Set up the crash reporter
 // Code version for Squinter
-#version "1.0.1"
+#version "2.0.0"
 
 /**
  * Generic development-oriented crash report service
@@ -8,7 +8,7 @@
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2019
  * @licence   MIT
- * @version   1.0.1
+ * @version   2.0.0
  *
  */
 crashReporter <- {
@@ -21,23 +21,7 @@ crashReporter <- {
      */
     "messenger" : null,
 
-    /**
-     * Relay an error received from the device (or the agent itself)
-     *
-     * @param {string} error - The error message to relay
-     *
-     */
-    "report" : function(error) {
-        // Prepare the error report text
-        local report = "*ERROR REPORT*\n*TIME* " + crashReporter.timestamp() + "\n";
-        report += ("*ERROR* " + error + "\n");
-        report += ("*DEVICE* " + imp.configparams.deviceid + "\n");
-        report += ("*GROUP* " + __EI.DEVICEGROUP_NAME + "\n");
-        report += ("*PRODUCT* " + __EI.PRODUCT_NAME);
-
-        // Send the report text via the chosen messenger object
-        crashReporter.messenger(report);
-    },
+    "agentid": "",
 
     /**
      * Initilize the service
@@ -45,16 +29,32 @@ crashReporter <- {
      * @param {function} messengerFunction - The function to send error messages (agent only)
      *
      */
-    "init" : function(messengerFunction = null) {
+    "init" : function(reportStatus = false, messengerFunction = null) {
         // Register the agent's device message handler on the agent
         local isAgent = (imp.environment() == 2);
 
-        // Set up the agenrt and check the messenger object
+        // Set up the agent and check the messenger object
         if (isAgent) {
             if (messengerFunction == null || typeof messengerFunction != "function")
                 throw("crashReporter.init() requires a messenger function");
             crashReporter.messenger = messengerFunction;
             device.on("crash.reporter.relay.debug.error", crashReporter.report);
+
+            // FROM 2.0.0
+            // Add device connection status reporting (disabled by default)
+            if (reportStatus) {
+                crashReporter.getagentid();
+
+                device.onconnect(function() {
+                    local report = "Agent " + agentid + " reports device " + imp.configparams.deviceid + " connected at " + crashReporter.timestamp();
+                    crashReporter.messenger(report);
+                }.bindenv(this));
+
+                device.ondisconnect(function() {
+                    local report = "Agent " + agentid + " reports device " + imp.configparams.deviceid + " registered as disconnected at " + crashReporter.timestamp();
+                    crashReporter.messenger(report);
+                }.bindenv(this));
+            }
         }
 
         // Register the onunhandled callback
@@ -76,6 +76,24 @@ crashReporter <- {
     },
 
     /**
+     * Relay an error received from the device (or the agent itself)
+     *
+     * @param {string} error - The error message to relay
+     *
+     */
+    "report" : function(error) {
+        // Prepare the error report text
+        local report = "*ERROR REPORT*\n*TIME* " + crashReporter.timestamp() + "\n";
+        report += ("*ERROR* " + error + "\n");
+        report += ("*DEVICE* " + imp.configparams.deviceid + "\n");
+        report += ("*GROUP* " + __EI.DEVICEGROUP_NAME + "\n");
+        report += ("*PRODUCT* " + __EI.PRODUCT_NAME);
+
+        // Send the report text via the chosen messenger object
+        crashReporter.messenger(report);
+    },
+
+    /**
      * Returns the current date as a formatted string
      *
      * @returns {string} The formatted date
@@ -89,5 +107,11 @@ crashReporter <- {
         if (time.hour > 23) time.hour -= 24;
         local z = bst ? "+01:00" : "UTC";
         return format("%04d-%02d-%02d %02d:%02d:%02d %s", time.year, time.month + 1, time.day, time.hour, time.min, time.sec, z);
+    },
+
+    "getagentid": function() {
+        local url = http.agenturl();
+        local urlparts = split(url, "/");
+        agentid = urlparts[2] + " of " + __EI.DEVICEGROUP_NAME + "/" + __EI.PRODUCT_NAME;
     }
 };
