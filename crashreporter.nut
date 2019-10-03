@@ -46,12 +46,14 @@ crashReporter <- {
                 crashReporter.getagentid();
 
                 device.onconnect(function() {
-                    local report = "Agent " + agentid + " reports device " + imp.configparams.deviceid + " connected at " + crashReporter.timestamp();
+                    local report = "*STATUS REPORT*\nAgent " + agentid + " reports device connected\n";
+                    report += crashReporter.makereport();
                     crashReporter.messenger(report);
                 }.bindenv(this));
 
                 device.ondisconnect(function() {
-                    local report = "Agent " + agentid + " reports device " + imp.configparams.deviceid + " registered as disconnected at " + crashReporter.timestamp();
+                    local report = "*STATUS REPORT*\nAgent " + agentid + " reports device registered as disconnected\n";
+                    report += crashReporter.makereport();
                     crashReporter.messenger(report);
                 }.bindenv(this));
             }
@@ -83,11 +85,8 @@ crashReporter <- {
      */
     "report" : function(error) {
         // Prepare the error report text
-        local report = "*ERROR REPORT*\n*TIME* " + crashReporter.timestamp() + "\n";
-        report += ("*ERROR* " + error + "\n");
-        report += ("*DEVICE* " + imp.configparams.deviceid + "\n");
-        report += ("*GROUP* " + __EI.DEVICEGROUP_NAME + "\n");
-        report += ("*PRODUCT* " + __EI.PRODUCT_NAME);
+        local report = "*ERROR REPORT*\n*ERROR* " + error + "\n";
+        report += crashReporter.makereport();
 
         // Send the report text via the chosen messenger object
         crashReporter.messenger(report);
@@ -112,6 +111,14 @@ crashReporter <- {
     "getagentid": function() {
         local url = http.agenturl();
         local urlparts = split(url, "/");
-        agentid = urlparts[2] + " of " + __EI.DEVICEGROUP_NAME + "/" + __EI.PRODUCT_NAME;
+        agentid = urlparts[2];
+    },
+
+    "makereport": function() {
+        local report = "*TIME* " + crashReporter.timestamp() + "\n";
+        report += ("*DEVICE* " + imp.configparams.deviceid + "\n");
+        report += ("*GROUP* " + __EI.DEVICEGROUP_NAME + "\n");
+        report += ("*PRODUCT* " + __EI.PRODUCT_NAME);
+        return report;
     }
 };
