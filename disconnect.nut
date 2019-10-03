@@ -4,9 +4,9 @@
 /**
  * Disconection/reconnection Mananger
  *
- * Provides disconnectionManager, a gloabl object which operates as a handler for imp connection states. 
+ * Provides disconnectionManager, a gloabl object which operates as a handler for imp connection states.
  * It monitors connection state and will automatically attempt to reconnect when the imp disconnects unexpectedly
- * 
+ *
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2018-19
  * @licence   MIT
@@ -72,8 +72,8 @@ disconnectionManager <- {
         // We do this to set our initial state
         disconnectionManager.isConnected = server.isconnected();
         if (!disconnectionManager.isConnected) {
-            server.connect(disconnectionManager._eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
             disconnectionManager._wakeup({"message": "Manually connecting to server", "type": "connecting"});
+            server.connect(disconnectionManager._eventHandler.bindenv(this), disconnectionManager.reconnectTimeout);
         } else {
             disconnectionManager._wakeup({"type": "connected"});
         }
@@ -131,11 +131,11 @@ disconnectionManager <- {
     // ********** Private Properties DO NOT ACCESS DIRECTLY **********
 
     "_noIP" : false,
-    "_codes" : ["No WiFi connection", "No LAN connection", "No IP address (DHCP error)", "impCloud IP not resolved (DNS error)", 
+    "_codes" : ["No WiFi connection", "No LAN connection", "No IP address (DHCP error)", "impCloud IP not resolved (DNS error)",
                 "impCloud unreachable", "Connected to impCloud", "No proxy server", "Proxy credentials rejected"],
 
     // ********** Private Methods DO NOT CALL DIRECTLY **********
-    
+
     /**
      * Function called whenever the server connection is broken or re-established, initially by impOS' unexpected disconnect
      * code and then repeatedly by server.connect(), below, as it periodically attempts to reconnect
@@ -234,10 +234,10 @@ disconnectionManager <- {
     },
 
     /**
-     * Format a timestamp string, either the current time (default; pass null as the argument), 
+     * Format a timestamp string, either the current time (default; pass null as the argument),
      * or a specific time (pass a timestamp as the argument). Includes the timezone
      * NOTE It is able to make use of the 'utilities' BST checker, if also included in your application
-     * 
+     *
      * @private
      *
      * @param {table} [n] - A Squirrel date/time description table (see date()). Default: current date
@@ -255,10 +255,10 @@ disconnectionManager <- {
         return format("%02i:%02i:%02i %s", time.hour, time.min, time.sec, z);
     },
 
-    // 
+    //
     /**
      * Queue up a message post with the supplied data on an immediate timer
-     * 
+     *
      * @private
      *
      * @param {eventDesc} evd - An event descriptor
