@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "3.1.1"
+#version "3.1.2"
 
 /**
  * General utility functions accessed via the table 'utilities'.
@@ -7,7 +7,7 @@
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2017-19
  * @licence   MIT
- * @version   3.1.1
+ * @version   3.1.2
  *
  * @table
  *
@@ -354,14 +354,16 @@ utilities <- {
         if (n.month == 2) {
             // BST starts on the last Sunday of March
             for (local i = 31 ; i > 24 ; i--) {
-                if (utilities.dayOfWeek(i, 2, n.year) == 0 && n.day >= i) return true;
+                // NOTE 'utilities.dayOfWeek()' takes months in the range 1-12, but n.month, as per date() will be 0-11
+                if (utilities.dayOfWeek(i, 3, n.year) == 0 && n.day >= i) return true;
             }
         }
 
         if (n.month == 9) {
             // BST ends on the last Sunday of October
             for (local i = 31 ; i > 24 ; i--) {
-                if (utilities.dayOfWeek(i, 9, n.year) == 0 && n.day < i) return true;
+                // See NOTE above
+                if (utilities.dayOfWeek(i, 10, n.year) == 0 && n.day < i) return true;
             }
         }
         return false;
@@ -387,14 +389,16 @@ utilities <- {
         if (n.month == 2) {
             // DST starts second Sunday in March
             for (local i = 8 ; i < 15 ; i++) {
-                if (utilities.dayOfWeek(i, 2, n.year) == 0 && n.day >= i) return true;
+                // NOTE 'utilities.dayOfWeek()' takes months in the range 1-12, but n.month, as per date() will be 0-11
+                if (utilities.dayOfWeek(i, 3, n.year) == 0 && n.day >= i) return true;
             }
         }
 
         if (n.month == 10) {
             // DST ends first Sunday in November
             for (local i = 1 ; i < 8 ; i++) {
-                if (utilities.dayOfWeek(i, 10, n.year) == 0 && n.day <= i) return true;
+                // See NOTE above
+                if (utilities.dayOfWeek(i, 11, n.year) == 0 && n.day <= i)return true;
             }
         }
 
