@@ -166,7 +166,7 @@ Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.
 
 ## utilities.nut ##
 
-#### Version 3.1.0 ####
+#### Version 3.1.1 ####
 
 A table of utility routines, accessed through the global object *utilities*. Please see the source code for further information, including a list of available methods.
 
@@ -202,6 +202,8 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 
 #### Release Notes ####
 
+- 3.1.1
+    - Fix an issue with *bstCheck()/isBST()* causing incorrect BST/DST reporting.
 - 3.1.0
     - Add *printblob()* function
 - 3.0.0
@@ -236,7 +238,7 @@ A table of utility routines, accessed through the global object *utilities*. Ple
 
 ## simpleslack.nut ##
 
-#### Version 1.0.0 ####
+#### Version 1.0.1 ####
 
 A very basic class for posting messages to Slack via the Incoming Webhook mechanism. Requires a Slack account able to create Incoming Webhooks. The constructor takes the new Incoming Webhook **path**, as provided by Slack, as a string.
 

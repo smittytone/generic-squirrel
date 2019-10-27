@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "3.1.2"
+#version "3.1.1"
 
 /**
  * General utility functions accessed via the table 'utilities'.
@@ -7,7 +7,7 @@
  * @author    Tony Smith (@smittytone)
  * @copyright Tony Smith, 2017-19
  * @licence   MIT
- * @version   3.1.2
+ * @version   3.1.1
  *
  * @table
  *
