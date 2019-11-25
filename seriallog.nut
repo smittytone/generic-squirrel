@@ -1,5 +1,5 @@
 // Code version for Squinter
-#version "2.1.0"
+#version "2.2.0"
 
 /**
  * Serial logger
@@ -10,7 +10,7 @@
  *
  * @Author  Tony Smith (@smittytone)
  * @licence MIT
- * @version 2.1.0
+ * @version 2.2.0
  *
  * @table
  *
@@ -56,6 +56,9 @@ seriallog <- {
               case "imp005":
                 uart = hardware.uart0;
                 u = "0";
+              case "imp006":
+                uart = hardware.uartABCD;
+                u = "ABCD";
               case "impC001":
                 uart = hardware.uartNU;
                 u = "NU";
