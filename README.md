@@ -15,7 +15,7 @@ Squirrel code used in multiple projects. The `.nut` files kept here can be cut a
 
 ## bootmessage.nut ##
 
-#### Version 2.2.2 ####
+#### Version 2.2.3 ####
 
 Incorporates code which logs impOS and network information. It is intended to be included early in the runtime (hence the name). Includes functions and code to trigger those functions. Compatible with **seriallog.nut**.
 
@@ -26,6 +26,8 @@ Incorporates code which logs impOS and network information. It is intended to be
 
 #### Release Notes #####
 
+- 2.2.3
+    - Add imp type
 - 2.2.2
     - Add device group information
 - 2.2.1
@@ -106,7 +108,7 @@ The property *disconnectionManager.eventCallback* can be set to a function with 
 
 ## seriallog.nut ##
 
-#### Version 2.1.0 ####
+#### Version 2.2.0 ####
 
 Incorporates code which sends log and error messages to UART as well as to *server.log()* and *server.error()*. To use this code as-is, replace all your *server.log()* and *server.error()* calls with *seriallog.log()* and *seriallog.error()*. The code creates the object *seriallog* as a global variable. you can therefore check for the presence of the object using `if ("seriallog" in getroottable()) { ... }`.
 
@@ -121,6 +123,7 @@ The default UART depends on the the type of imp on which the code is running:
 | imp003 | hardware.uartDM |
 | imp004m | hardware.uartHJ |
 | imp005 | hardware.uart0 |
+| imp006 | hardware.uartABCD |
 | impC001 | hardware.uartNU |
 
 Logging to UART can be controlled by calling *seriallog.enable()* or *seriallog.disable()*, or setting the *seriallog.enabled* property directly. This does not affect logging via the server, which will always be used, provided there is a connection to the server.
