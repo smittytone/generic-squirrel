@@ -26,7 +26,7 @@ bootinfo <- {
         // 'seriallog' is added as a global by including seriallog.nut in your code AHEAD of bootmessage.nut
         // NOTE 'seriallog' will always call server.log() too
         local lg = "seriallog" in getroottable() ? seriallog : server;
-        lg.log("impOS version " + bootinfo.version()) + " on " + imp.info().type;
+        lg.log("impOS " + bootinfo.version() + "on " + imp.info().type);
         lg.log(format("Product \'%s\' (%s)", __EI.PRODUCT_NAME, __EI.PRODUCT_ID));
         lg.log(format("Device Group \'%s\' (%s)", __EI.DEVICEGROUP_NAME, __EI.DEVICEGROUP_ID));
         lg.log(format("SHA %s", __EI.DEPLOYMENT_SHA));
