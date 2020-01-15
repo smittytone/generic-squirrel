@@ -4,7 +4,7 @@
 /**
  * Disconection/reconnection Mananger
  *
- * Provides disconnectionManager, a gloabl object which operates as a handler for imp connection states.
+ * Provides disconnectionManager, a global object which operates as a handler for imp connection states.
  * It monitors connection state and will automatically attempt to reconnect when the imp disconnects unexpectedly
  *
  * @author    Tony Smith (@smittytone)
