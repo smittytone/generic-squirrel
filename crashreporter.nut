@@ -33,10 +33,10 @@ crashReporter <- {
      * Initilize the service
      *
      * @param {function} messengerFunction - The function to send error messages (agent only)
-     * @param {bool}     reportStatus      - Should the agent report device status? Default: false (agent only)
+     * @param {bool}     doReportStatus    - Should the agent report device status? Default: false (agent only)
      *
      */
-    "init" : function(messengerFunction = null, reportStatus = false) {
+    "init" : function(messengerFunction = null, doReportStatus = false) {
         // Register the agent's device message handler on the agent
         local isAgent = (imp.environment() == 2);
 
@@ -48,7 +48,7 @@ crashReporter <- {
 
             // FROM 1.1.0
             // Add device connection status reporting (disabled by default)
-            if (reportStatus) {
+            if (doReportStatus) {
                 crashReporter._getagentid();
                 crashReporter._setWatchers();
             }
