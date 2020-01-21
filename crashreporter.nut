@@ -1,14 +1,14 @@
 // Set up the crash reporter
 // Code version for Squinter
-#version "1.1.0"
+#version "1.1.1"
 
 /**
  * Generic development-oriented crash report service
  *
  * @author    Tony Smith (@smittytone)
- * @copyright Tony Smith, 2019
+ * @copyright Tony Smith, 2019-20
  * @licence   MIT
- * @version   1.1.0
+ * @version   1.1.1
  *
  */
 crashReporter <- {
