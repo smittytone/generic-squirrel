@@ -266,11 +266,11 @@ local slack = SimpleSlack("T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX");
 
 ## crashreporter.nut ##
 
-#### Version 1.1.0 ####
+#### Version 1.1.1 ####
 
 A generic error reporter, implemented as a Squirrel table called *crashReporter*. Call the *crashReporter.init()* function and pass in a reference to a messenger function such as the SimpleSlack class’ *post()* method, described above. You can provide any messenger function you like, but it **must** take a single message string.
 
-From 1.1.0, a second parameter takes a boolean: should the agent report device connection and disconnection events? This is `false` by default; if you wish to enable/disable later, call *crashReporter.enableStateReports(<true_or_false>)*.
+From 1.1.1, a second parameter takes a boolean: should the agent report device connection and disconnection events? This is `false` by default; if you wish to enable/disable later, call *crashReporter.enableStateReports(<true_or_false>)*.
 
 **Note** Device connection state reporting sets handlers using the imp API’s **device.onconnected()** and **device.ondisconnected()**. Please bear in mind that these calls may override or be overridden by your application code.
 
@@ -290,6 +290,8 @@ crashReporter.init(slack.post.bindenv(slack));
 
 #### Release Notes ####
 
+- 1.1.1
+    - Minor improvements
 - 1.1.0
     - Add optional device connection state reporting
 - 1.0.1
