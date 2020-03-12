@@ -43,7 +43,7 @@ class SimpleSlack {
         }
 
         // Prepare and send the message to Slack asynchronously
-        local body = {"text" :message,"mrkdwn":true};
+        local body = {"text":message, "mrkdwn":true};
         local req = http.post(BASE + _key, {"Content-type":"application/json"}, http.jsonencode(body));
         req.sendasync(_done);
     }
