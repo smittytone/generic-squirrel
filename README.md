@@ -1,6 +1,6 @@
 # Generic Squirrel #
 
-Squirrel code used in multiple projects. The `.nut` files kept here can be cut and pasted into project source code or integrated via [Squinter](https://smittytone.nets/squinter/version2/index.html).
+Squirrel code used in multiple projects. The `.nut` files kept here can be cut and pasted into project source code or integrated via [Squinter](https://smittytone.net/squinter/index.html).
 
 **Note** Updates are made regularly to the `develop` branch, which is merged into `master` on a (roughly) monthly basis.
 
